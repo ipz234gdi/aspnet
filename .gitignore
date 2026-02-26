@@ -1,0 +1,50 @@
+﻿# Ignore build outputs
+[Bb]in/
+[Oo]bj/
+**/bin/
+**/obj/
+
+# Visual Studio temporary files, build results, and
+# user-specific files
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+
+# Rider
+.idea/
+*.sln.iml
+
+# NuGet
+*.nupkg
+packages/
+project.assets.json
+
+# Publish output
+publish/
+
+# Resharper
+_ReSharper*/
+*.DotSettings.user
+
+# IIS Express
+IISExpress/
+
+# Logs
+*.log
+
+# Database files
+*.mdf
+*.ldf
+*.db
+
+# OS generated files
+Thumbs.db
+desktop.ini
+.DS_Store
+
+# Rider caches
+/.idea/
+
