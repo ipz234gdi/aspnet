@@ -1,1 +1,15 @@
-﻿
+﻿@model IQueryable<Movie>
+
+<div class="text-center mb-4">
+    <h2>Доступні кіносеанси</h2>
+</div>
+
+@foreach (var m in Model ?? Enumerable.Empty<Movie>())
+{
+    <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ccc;">
+        <h3>@m.Title</h3>
+        <p>@m.Description</p>
+        <p><strong>Жанр:</strong> @m.Genre</p>
+        <h4>Ціна: @m.TicketPrice.ToString("c")</h4>
+    </div>
+}
