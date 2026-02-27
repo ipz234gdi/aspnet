@@ -1,25 +1,34 @@
 ﻿@model CinemaBooking.Models.ViewModels.MoviesListViewModel
 
 <div class="text-center mb-4">
-    <h2>Доступні кіносеанси</h2>
+    <h2 class="display-6">Доступні кіносеанси</h2>
 </div>
 
-@foreach (var m in Model.Movies)
-{
-    <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ccc;">
-        <h3>@m.Title</h3>
-        <p>@m.Description</p>
-        <p><strong>Жанр:</strong> @m.Genre</p>
-        <h4>Ціна: @m.TicketPrice.ToString("c")</h4>
-    </div>
-}
-
-<div style="margin-top: 20px;">
-    @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+<div class="row">
+    @foreach (var m in Model.Movies)
     {
-        <a href="/?moviePage=@i" 
-           style="padding: 5px 10px; margin-right: 5px; border: 1px solid #000; text-decoration: none; @(i == Model.PagingInfo.CurrentPage ? "background-color: #ddd; font-weight: bold;" : "")">
-            @i
-        </a>
+        <div class="col-md-6 mb-4">
+            <div class="card shadow-sm h-100 border-0">
+                <div class="card-body">
+                    <h5 class="card-title fw-bold">@m.Title</h5>
+                    <h6 class="card-subtitle mb-3 text-muted">Жанр: @m.Genre</h6>
+                    <p class="card-text">@m.Description</p>
+                    <div class="mt-auto">
+                        <h4 class="text-success mb-0">@m.TicketPrice.ToString("c")</h4>
+                    </div>
+                </div>
+            </div>
+        </div>
     }
 </div>
+
+<nav aria-label="Page navigation" class="mt-4">
+    <ul class="pagination justify-content-center">
+        @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+        {
+            <li class="page-item @(i == Model.PagingInfo.CurrentPage ? "active" : "")">
+                <a class="page-link" href="/?moviePage=@i">@i</a>
+            </li>
+        }
+    </ul>
+</nav>

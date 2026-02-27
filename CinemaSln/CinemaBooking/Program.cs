@@ -3,7 +3,8 @@ using CinemaBooking.Models;
 
 var builder = WebApplication.CreateBuilder(args);
 
-builder.Services.AddControllersWithViews();
+builder.Services.AddControllersWithViews()
+    .AddRazorRuntimeCompilation();
 
 builder.Services.AddDbContext<CinemaDbContext>(opts => {
     opts.UseSqlServer(builder.Configuration["ConnectionStrings:CinemaConnection"]);
