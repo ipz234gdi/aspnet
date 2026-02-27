@@ -1,0 +1,91 @@
+﻿# Visual Studio / .NET generated files
+.vs/
+.vscode/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+
+# Build outputs
+bin/
+obj/
+out/
+artifacts/
+publish/
+
+# NuGet
+*.nupkg
+packages/
+project.lock.json
+project.fragment.lock.json
+
+# Rider
+.idea/
+
+# VS Code workspace files
+.history/
+
+# Logs and databases
+*.log
+*.sqlite
+*.db
+*.mdf
+*.ldf
+TestResults/
+
+# Coverage & profiling
+*.coverage
+*.coveragexml
+*.opencover
+*.lcov
+*.profdata
+*.dotCover
+
+# Entity Framework
+# keep migrations in source control; ignore local tooling files
+*.efmigrations.json
+
+# User-specific files
+*.userprefs
+*.rsuser
+*.suo
+
+# Publish output
+wwwroot/dist/
+
+# ASP.NET Core
+# Do NOT ignore appsettings.json (committed), but ignore environment-specific secrets
+secrets.json
+appsettings.*.Local.json
+
+# JetBrains Rider
+.idea/
+*.sln.iml
+
+# macOS
+.DS_Store
+
+# Windows
+Thumbs.db
+ehthumbs.db
+
+# JetBrains Rider caches
+.idea/
+*.iws
+
+# dotnet tools
+.toolstarget
+
+# JetBrains Rider
+.idea/
+
+# Ignore generated staticwebassets files in dev builds
+**/staticwebassets.build.json
+
+# Ignore local launch settings if desired
+.vs/launchSettings.json
+
+# Optional: ignore user-specific launchSettings
+# Properties/launchSettings.json
+
+# End of .gitignore
