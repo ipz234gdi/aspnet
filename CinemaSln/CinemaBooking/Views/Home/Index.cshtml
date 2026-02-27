@@ -1,10 +1,10 @@
-﻿@model IQueryable<Movie>
+﻿@model CinemaBooking.Models.ViewModels.MoviesListViewModel
 
 <div class="text-center mb-4">
     <h2>Доступні кіносеанси</h2>
 </div>
 
-@foreach (var m in Model ?? Enumerable.Empty<Movie>())
+@foreach (var m in Model.Movies)
 {
     <div style="margin-bottom: 20px; padding: 15px; border: 1px solid #ccc;">
         <h3>@m.Title</h3>
@@ -13,3 +13,13 @@
         <h4>Ціна: @m.TicketPrice.ToString("c")</h4>
     </div>
 }
+
+<div style="margin-top: 20px;">
+    @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+    {
+        <a href="/?moviePage=@i" 
+           style="padding: 5px 10px; margin-right: 5px; border: 1px solid #000; text-decoration: none; @(i == Model.PagingInfo.CurrentPage ? "background-color: #ddd; font-weight: bold;" : "")">
+            @i
+        </a>
+    }
+</div>
