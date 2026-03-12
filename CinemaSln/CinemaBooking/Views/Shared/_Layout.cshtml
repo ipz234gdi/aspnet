@@ -11,6 +11,24 @@
         <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
             <div class="container">
                 <a class="navbar-brand" href="/">CinemaBooking</a>
+                <div class="ms-auto">
+                    @{
+                        var cart = Context.Session.GetString("BookingCart");
+                        int count = 0;
+                        if (cart != null)
+                        {
+                            var bookingCart = System.Text.Json.JsonSerializer.Deserialize<CinemaBooking.Models.BookingCart>(cart);
+                            count = bookingCart?.Items?.Count ?? 0;
+                        }
+                    }
+                    <a href="/Booking" class="btn btn-outline-light">
+                        Мої бронювання
+                        @if (count > 0)
+                        {
+                            <span class="badge bg-danger ms-1">@count</span>
+                        }
+                    </a>
+                </div>
             </div>
         </nav>
     </header>

@@ -1,0 +1,51 @@
+@model CinemaBooking.Models.BookingCart
+
+<h2 class="display-6 mb-4">Мої бронювання</h2>
+
+@if (!Model.Items.Any())
+{
+    <div class="alert alert-info">
+        Ви ще не обрали жодного місця. Перейдіть до <a href="/">списку фільмів</a> та оберіть місця.
+    </div>
+}
+else
+{
+    <table class="table table-striped">
+        <thead class="table-dark">
+            <tr>
+                <th>Фільм</th>
+                <th>Місце</th>
+                <th>Ціна</th>
+                <th></th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var item in Model.Items)
+            {
+                <tr>
+                    <td>@item.Title</td>
+                    <td>@item.Seat</td>
+                    <td>@item.TicketPrice.ToString("c")</td>
+                    <td>
+                        <form asp-action="RemoveSeat" method="post">
+                            <input type="hidden" name="movieId" value="@item.MovieID" />
+                            <input type="hidden" name="seat" value="@item.Seat" />
+                            <button type="submit" class="btn btn-sm btn-outline-danger">Видалити</button>
+                        </form>
+                    </td>
+                </tr>
+            }
+        </tbody>
+        <tfoot>
+            <tr>
+                <td colspan="2" class="fw-bold text-end">Разом:</td>
+                <td class="fw-bold">@Model.Items.Sum(i => i.TicketPrice).ToString("c")</td>
+                <td></td>
+            </tr>
+        </tfoot>
+    </table>
+
+    <form asp-action="Clear" method="post" class="d-inline">
+        <button type="submit" class="btn btn-outline-secondary">Очистити кошик</button>
+    </form>
+}

@@ -12,9 +12,13 @@ builder.Services.AddDbContext<CinemaDbContext>(opts => {
 
 builder.Services.AddScoped<ICinemaRepository, EFCinemaRepository>();
 
+builder.Services.AddDistributedMemoryCache();
+builder.Services.AddSession();
+
 var app = builder.Build();
 
 app.UseStaticFiles();
+app.UseSession();
 app.MapDefaultControllerRoute();
 
 SeedData.EnsurePopulated(app);
