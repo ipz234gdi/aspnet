@@ -1,4 +1,4 @@
-﻿@model CinemaBooking.Models.ViewModels.MoviesListViewModel
+@model CinemaBooking.Models.ViewModels.MoviesListViewModel
 
 <div class="text-center mb-4">
     <h2 class="display-6">Доступні кіносеанси</h2>
@@ -7,18 +7,7 @@
 <div class="row">
     @foreach (var m in Model.Movies)
     {
-        <div class="col-md-6 mb-4">
-            <div class="card shadow-sm h-100 border-0">
-                <div class="card-body">
-                    <h5 class="card-title fw-bold">@m.Title</h5>
-                    <h6 class="card-subtitle mb-3 text-muted">Жанр: @m.Genre</h6>
-                    <p class="card-text">@m.Description</p>
-                    <div class="mt-auto">
-                        <h4 class="text-success mb-0">@m.TicketPrice.ToString("c")</h4>
-                    </div>
-                </div>
-            </div>
-        </div>
+        <partial name="MovieSummary" model="m" />
     }
 </div>
 
@@ -27,7 +16,8 @@
         @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
         {
             <li class="page-item @(i == Model.PagingInfo.CurrentPage ? "active" : "")">
-                <a class="page-link" href="/?moviePage=@i">@i</a>
+                <a class="page-link"
+                   href="/?moviePage=@i@(Model.CurrentGenre != null ? "&genre=" + Model.CurrentGenre : "")">@i</a>
             </li>
         }
     </ul>

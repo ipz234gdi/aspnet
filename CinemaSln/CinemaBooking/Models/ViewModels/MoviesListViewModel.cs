@@ -1,4 +1,4 @@
-﻿using System.Collections.Generic;
+using System.Collections.Generic;
 using System.Linq;
 
 namespace CinemaBooking.Models.ViewModels
@@ -7,5 +7,6 @@ namespace CinemaBooking.Models.ViewModels
     {
         public IEnumerable<Movie> Movies { get; set; } = Enumerable.Empty<Movie>();
         public PagingInfo PagingInfo { get; set; } = new();
+        public string? CurrentGenre { get; set; }
     }
 }

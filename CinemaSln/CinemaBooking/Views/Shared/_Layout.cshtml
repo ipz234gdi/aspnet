@@ -1,4 +1,4 @@
-﻿<!DOCTYPE html>
+<!DOCTYPE html>
 <html>
 <head>
     <meta name="viewport" content="width=device-width" />
@@ -16,7 +16,14 @@
     </header>
 
     <div class="container mt-4" style="flex: 1;">
-        @RenderBody()
+        <div class="row">
+            <div class="col-md-3">
+                @await Component.InvokeAsync("NavigationMenu")
+            </div>
+            <div class="col-md-9">
+                @RenderBody()
+            </div>
+        </div>
     </div>
 
     <footer class="bg-dark text-white text-center py-3 mt-5">

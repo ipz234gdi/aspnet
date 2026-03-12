@@ -1,0 +1,14 @@
+@model CinemaBooking.Models.Movie
+
+<div class="col-md-6 mb-4">
+    <div class="card shadow-sm h-100 border-0">
+        <div class="card-body">
+            <h5 class="card-title fw-bold">@Model.Title</h5>
+            <h6 class="card-subtitle mb-3 text-muted">Жанр: @Model.Genre</h6>
+            <p class="card-text">@Model.Description</p>
+            <div class="mt-auto">
+                <h4 class="text-success mb-0">@Model.TicketPrice.ToString("c")</h4>
+            </div>
+        </div>
+    </div>
+</div>

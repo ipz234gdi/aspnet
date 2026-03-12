@@ -1,0 +1,16 @@
+@model IEnumerable<string>
+
+<h5 class="fw-bold mb-3">Жанри</h5>
+<div class="list-group">
+    <a href="/"
+       class="list-group-item list-group-item-action @(ViewBag.SelectedGenre == null ? "active" : "")">
+        Усі
+    </a>
+    @foreach (var genre in Model)
+    {
+        <a href="/?genre=@genre"
+           class="list-group-item list-group-item-action @(genre == ViewBag.SelectedGenre ? "active" : "")">
+            @genre
+        </a>
+    }
+</div>
