@@ -4,6 +4,7 @@ namespace CinemaBooking.Models
     {
         public long MovieID { get; set; }
         public string Title { get; set; } = string.Empty;
+        public string CinemaHallName { get; set; } = string.Empty;
         public string Seat { get; set; } = string.Empty;
         public decimal TicketPrice { get; set; }
     }

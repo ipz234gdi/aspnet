@@ -1,4 +1,4 @@
-﻿using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore;
 
 namespace CinemaBooking.Models
 {
@@ -8,5 +8,6 @@ namespace CinemaBooking.Models
             : base(options) { }
 
         public DbSet<Movie> Movies => Set<Movie>();
+        public DbSet<CinemaHall> CinemaHalls => Set<CinemaHall>();
     }
 }

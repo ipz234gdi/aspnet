@@ -1,0 +1,36 @@
+@model Movie
+
+<h2 class="display-6 mb-4">Деталі фільму</h2>
+
+<div class="card">
+    <div class="card-body">
+        <h4 class="card-title">@Model.Title</h4>
+        <table class="table table-borderless">
+            <tr>
+                <th>ID</th>
+                <td>@Model.MovieID</td>
+            </tr>
+            <tr>
+                <th>Опис</th>
+                <td>@Model.Description</td>
+            </tr>
+            <tr>
+                <th>Жанр</th>
+                <td>@Model.Genre</td>
+            </tr>
+            <tr>
+                <th>Ціна квитка</th>
+                <td>@Model.TicketPrice.ToString("c")</td>
+            </tr>
+            <tr>
+                <th>Зал</th>
+                <td>@(Model.CinemaHall?.Name ?? "Не призначено")</td>
+            </tr>
+        </table>
+    </div>
+</div>
+
+<div class="mt-3">
+    <a asp-action="Edit" asp-route-id="@Model.MovieID" class="btn btn-warning">Редагувати</a>
+    <a asp-action="Index" class="btn btn-secondary">До списку</a>
+</div>

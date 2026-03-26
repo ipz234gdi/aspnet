@@ -26,6 +26,8 @@ namespace CinemaBooking.Controllers
         {
             var movie = repository.Movies.FirstOrDefault(m => m.MovieID == movieId);
             if (movie == null) return NotFound();
+            var hall = repository.CinemaHalls.FirstOrDefault(h => h.CinemaHallID == movie.CinemaHallID);
+            string hallName = hall?.Name ?? "Невідомо";
 
             var cart = HttpContext.Session.GetJson<BookingCart>(CartSessionKey)
                        ?? new BookingCart();
@@ -39,6 +41,7 @@ namespace CinemaBooking.Controllers
                 {
                     MovieID = movie.MovieID ?? 0,
                     Title = movie.Title,
+                    CinemaHallName = hallName,
                     Seat = seatLabel,
                     TicketPrice = movie.TicketPrice
                 });

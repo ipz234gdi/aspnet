@@ -1,0 +1,32 @@
+@model List<Movie>
+
+<div class="d-flex justify-content-between align-items-center mb-4">
+    <h2 class="display-6">Фільми</h2>
+    <a asp-action="Create" class="btn btn-success">Додати фільм</a>
+</div>
+
+<table class="table table-striped">
+    <thead class="table-dark">
+        <tr>
+            <th>Назва</th>
+            <th>Жанр</th>
+            <th>Ціна</th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+        @foreach (var movie in Model)
+        {
+            <tr>
+                <td>@movie.Title</td>
+                <td>@movie.Genre</td>
+                <td>@movie.TicketPrice.ToString("c")</td>
+                <td>
+                    <a asp-action="Details" asp-route-id="@movie.MovieID" class="btn btn-sm btn-info">Деталі</a>
+                    <a asp-action="Edit" asp-route-id="@movie.MovieID" class="btn btn-sm btn-warning">Редагувати</a>
+                    <a asp-action="Delete" asp-route-id="@movie.MovieID" class="btn btn-sm btn-danger">Видалити</a>
+                </td>
+            </tr>
+        }
+    </tbody>
+</table>

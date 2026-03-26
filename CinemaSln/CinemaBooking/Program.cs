@@ -7,7 +7,7 @@ builder.Services.AddControllersWithViews()
     .AddRazorRuntimeCompilation();
 
 builder.Services.AddDbContext<CinemaDbContext>(opts => {
-    opts.UseSqlServer(builder.Configuration["ConnectionStrings:CinemaConnection"]);
+    opts.UseSqlite(builder.Configuration["ConnectionStrings:CinemaConnection"]);
 });
 
 builder.Services.AddScoped<ICinemaRepository, EFCinemaRepository>();
