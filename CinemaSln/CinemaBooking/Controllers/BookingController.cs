@@ -10,16 +10,17 @@ namespace CinemaBooking.Controllers
     public class BookingController : Controller
     {
         private ICinemaRepository repository;
-        private const string CartSessionKey = "BookingCart";
 
         public BookingController(ICinemaRepository repo)
         {
             repository = repo;
         }
 
+        private string GetCartKey() => $"BookingCart_{User.Identity?.Name}";
+
         public IActionResult Index()
         {
-            var cart = HttpContext.Session.GetJson<BookingCart>(CartSessionKey)
+            var cart = HttpContext.Session.GetJson<BookingCart>(GetCartKey())
                        ?? new BookingCart();
             return View(cart);
         }
@@ -32,7 +33,7 @@ namespace CinemaBooking.Controllers
             var hall = repository.CinemaHalls.FirstOrDefault(h => h.CinemaHallID == movie.CinemaHallID);
             string hallName = hall?.Name ?? "Невідомо";
 
-            var cart = HttpContext.Session.GetJson<BookingCart>(CartSessionKey)
+            var cart = HttpContext.Session.GetJson<BookingCart>(GetCartKey())
                        ?? new BookingCart();
 
             string seatLabel = $"Ряд {row}, Місце {seat}";
@@ -50,18 +51,18 @@ namespace CinemaBooking.Controllers
                 });
             }
 
-            HttpContext.Session.SetJson(CartSessionKey, cart);
+            HttpContext.Session.SetJson(GetCartKey(), cart);
             return RedirectToAction("Index");
         }
 
         [HttpPost]
         public IActionResult RemoveSeat(long movieId, string seat)
         {
-            var cart = HttpContext.Session.GetJson<BookingCart>(CartSessionKey)
+            var cart = HttpContext.Session.GetJson<BookingCart>(GetCartKey())
                        ?? new BookingCart();
 
             cart.Items.RemoveAll(i => i.MovieID == movieId && i.Seat == seat);
-            HttpContext.Session.SetJson(CartSessionKey, cart);
+            HttpContext.Session.SetJson(GetCartKey(), cart);
 
             return RedirectToAction("Index");
         }
@@ -69,7 +70,7 @@ namespace CinemaBooking.Controllers
         [HttpPost]
         public IActionResult Clear()
         {
-            HttpContext.Session.Remove(CartSessionKey);
+            HttpContext.Session.Remove(GetCartKey());
             return RedirectToAction("Index");
         }
     }

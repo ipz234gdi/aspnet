@@ -3,14 +3,16 @@
 <head>
     <meta name="viewport" content="width=device-width" />
     <title>Бронювання квитків - CinemaBooking</title>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap" rel="stylesheet" />
     <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" />
 </head>
-<body class="bg-light min-vh-100 d-flex flex-column">
+<body class="min-vh-100 d-flex flex-column">
 
     <header>
-        <nav class="navbar navbar-expand-lg navbar-dark bg-dark shadow-sm">
+        <nav class="navbar navbar-expand-lg navbar-dark shadow-sm">
             <div class="container">
-                <a class="navbar-brand" href="/">CinemaBooking</a>
+                <a class="navbar-brand" href="/">🎬 CinemaBooking</a>
                 <ul class="navbar-nav me-auto">
                     <li class="nav-item">
                         <a class="nav-link" href="/Movie">Фільми</a>
@@ -20,33 +22,26 @@
                     </li>
                 </ul>
                 <div class="ms-auto d-flex align-items-center">
-                    @{
-                        var cart = Context.Session.GetString("BookingCart");
+                    @if (User.Identity?.IsAuthenticated == true)
+                    {
+                        var cartKey = $"BookingCart_{User.Identity.Name}";
+                        var cart = Context.Session.GetString(cartKey);
                         int count = 0;
                         if (cart != null)
                         {
                             var bookingCart = System.Text.Json.JsonSerializer.Deserialize<CinemaBooking.Data.Models.BookingCart>(cart);
                             count = bookingCart?.Items?.Count ?? 0;
                         }
-                    }
-                    <a href="/Booking" class="btn btn-outline-light me-2">
-                        Мої бронювання
-                        @if (count > 0)
-                        {
-                            <span class="badge bg-danger ms-1">@count</span>
-                        }
-                    </a>
-
-                    @if (User.Identity?.IsAuthenticated == true)
-                    {
+                        <a href="/Booking" class="btn btn-outline-light me-2">
+                            Мої бронювання
+                            @if (count > 0)
+                            {
+                                <span class="badge bg-danger ms-1">@count</span>
+                            }
+                        </a>
                         <span class="text-light me-2">@User.Identity.Name</span>
                         <a href="/Account/Profile" class="btn btn-outline-info me-2">Профіль</a>
                         <a href="/Account/Logout" class="btn btn-outline-warning">Вийти</a>
-                    }
-                    else
-                    {
-                        <a href="/Account/Login" class="btn btn-outline-light me-2">Вхід</a>
-                        <a href="/Account/Register" class="btn btn-outline-success">Реєстрація</a>
                     }
                 </div>
             </div>
@@ -64,7 +59,7 @@
         </div>
     </div>
 
-    <footer class="bg-dark text-white text-center py-3 mt-5">
+    <footer class="text-white text-center py-3 mt-5">
         <div class="container">
             &copy; 2026 - CinemaBooking
         </div>

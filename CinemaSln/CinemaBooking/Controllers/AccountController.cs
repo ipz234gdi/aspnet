@@ -9,15 +9,12 @@ namespace CinemaBooking.Controllers
     {
         private UserManager<IdentityUser> userManager;
         private SignInManager<IdentityUser> signInManager;
-        private RoleManager<IdentityRole> roleManager;
 
         public AccountController(UserManager<IdentityUser> userMgr,
-            SignInManager<IdentityUser> signInMgr,
-            RoleManager<IdentityRole> roleMgr)
+            SignInManager<IdentityUser> signInMgr)
         {
             userManager = userMgr;
             signInManager = signInMgr;
-            roleManager = roleMgr;
         }
 
         public ViewResult Login(string returnUrl = "/")
@@ -72,7 +69,7 @@ namespace CinemaBooking.Controllers
                 IdentityResult result = await userManager.CreateAsync(user, model.Password);
                 if (result.Succeeded)
                 {
-                    await userManager.AddToRoleAsync(user, model.Role);
+                    await userManager.AddToRoleAsync(user, "User");
                     await signInManager.SignInAsync(user, isPersistent: false);
                     return RedirectToAction("Index", "Home");
                 }
