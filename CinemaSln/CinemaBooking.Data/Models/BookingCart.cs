@@ -1,4 +1,4 @@
-namespace CinemaBooking.Models
+namespace CinemaBooking.Data.Models
 {
     public class CartItem
     {

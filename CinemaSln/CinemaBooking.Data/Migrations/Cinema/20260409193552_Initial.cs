@@ -2,10 +2,10 @@
 
 #nullable disable
 
-namespace CinemaBooking.Migrations
+namespace CinemaBooking.Data.Migrations.Cinema
 {
     /// <inheritdoc />
-    public partial class InitialSqlite : Migration
+    public partial class Initial : Migration
     {
         /// <inheritdoc />
         protected override void Up(MigrationBuilder migrationBuilder)

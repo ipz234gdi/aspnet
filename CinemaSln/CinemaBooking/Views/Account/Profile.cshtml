@@ -1,0 +1,46 @@
+@model CinemaBooking.Models.ViewModels.ProfileModel
+
+<h2 class="display-6 mb-4">Особистий кабінет</h2>
+
+@if (TempData["Message"] != null)
+{
+    <div class="alert alert-success">@TempData["Message"]</div>
+}
+
+<div class="row">
+    <div class="col-md-6">
+        <div class="card shadow-sm">
+            <div class="card-header bg-dark text-white">
+                <h5 class="mb-0">Дані профілю</h5>
+            </div>
+            <div class="card-body">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <form asp-action="Profile" method="post">
+                    <div class="mb-3">
+                        <label class="form-label">Ім'я користувача</label>
+                        <input asp-for="UserName" class="form-control" readonly />
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <input asp-for="Email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="PhoneNumber" class="form-label">Телефон</label>
+                        <input asp-for="PhoneNumber" class="form-control" />
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Ролі</label>
+                        <p class="form-control-plaintext">
+                            @foreach (var role in Model.Roles)
+                            {
+                                <span class="badge bg-primary me-1">@role</span>
+                            }
+                        </p>
+                    </div>
+                    <button type="submit" class="btn btn-warning">Зберегти зміни</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

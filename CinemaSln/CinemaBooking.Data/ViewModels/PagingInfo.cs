@@ -1,6 +1,4 @@
-﻿using System;
-
-namespace CinemaBooking.Models.ViewModels
+namespace CinemaBooking.Data.ViewModels
 {
     public class PagingInfo
     {

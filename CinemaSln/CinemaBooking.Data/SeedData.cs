@@ -1,6 +1,9 @@
+using CinemaBooking.Data.Models;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.DependencyInjection;
 
-namespace CinemaBooking.Models
+namespace CinemaBooking.Data
 {
     public static class SeedData
     {

@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.Rendering;
-using CinemaBooking.Models;
+using CinemaBooking.Data;
+using CinemaBooking.Data.Models;
 
 namespace CinemaBooking.Controllers
 {
+    [Authorize]
     public class MovieController : Controller
     {
         private ICinemaRepository repository;
@@ -27,6 +30,7 @@ namespace CinemaBooking.Controllers
             return View(movie);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Create()
         {
             ViewBag.CinemaHalls = new SelectList(repository.CinemaHalls.ToList(), "CinemaHallID", "Name");
@@ -34,6 +38,7 @@ namespace CinemaBooking.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Create(Movie movie)
         {
             if (ModelState.IsValid)
@@ -45,6 +50,7 @@ namespace CinemaBooking.Controllers
             return View(movie);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(long id)
         {
             var movie = repository.Movies.FirstOrDefault(m => m.MovieID == id);
@@ -54,6 +60,7 @@ namespace CinemaBooking.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult Edit(Movie movie)
         {
             if (ModelState.IsValid)
@@ -72,6 +79,7 @@ namespace CinemaBooking.Controllers
             return View(movie);
         }
 
+        [Authorize(Roles = "Admin")]
         public IActionResult Delete(long id)
         {
             var movie = repository.Movies.FirstOrDefault(m => m.MovieID == id);
@@ -82,6 +90,7 @@ namespace CinemaBooking.Controllers
         }
 
         [HttpPost]
+        [Authorize(Roles = "Admin")]
         public IActionResult DeleteConfirmed(long movieID)
         {
             var movie = repository.Movies.FirstOrDefault(m => m.MovieID == movieID);

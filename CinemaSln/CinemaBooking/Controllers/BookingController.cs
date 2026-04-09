@@ -1,9 +1,12 @@
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
-using CinemaBooking.Models;
+using CinemaBooking.Data;
+using CinemaBooking.Data.Models;
 using CinemaBooking.Infrastructure;
 
 namespace CinemaBooking.Controllers
 {
+    [Authorize]
     public class BookingController : Controller
     {
         private ICinemaRepository repository;

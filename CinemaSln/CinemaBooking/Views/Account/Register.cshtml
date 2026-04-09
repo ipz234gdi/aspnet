@@ -1,0 +1,49 @@
+@model CinemaBooking.Models.ViewModels.RegisterModel
+
+<h2 class="display-6 mb-4">Реєстрація</h2>
+
+<div class="row justify-content-center">
+    <div class="col-md-5">
+        <div class="card shadow-sm">
+            <div class="card-body">
+                <div asp-validation-summary="All" class="text-danger"></div>
+                <form asp-action="Register" method="post">
+                    <div class="mb-3">
+                        <label asp-for="UserName" class="form-label">Ім'я користувача</label>
+                        <input asp-for="UserName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <input asp-for="Email" type="email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Пароль</label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                        <small class="text-muted">Мінімум 8 символів, містить цифри, літери та хоча б одну велику літеру</small>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label">Підтвердження паролю</label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Role" class="form-label">Роль</label>
+                        <select asp-for="Role" class="form-select">
+                            <option value="User">Користувач</option>
+                            <option value="Admin">Адміністратор</option>
+                        </select>
+                        <span asp-validation-for="Role" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-success w-100">Зареєструватися</button>
+                </form>
+                <div class="text-center mt-3">
+                    <span>Вже маєте акаунт?</span>
+                    <a asp-action="Login">Увійти</a>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>

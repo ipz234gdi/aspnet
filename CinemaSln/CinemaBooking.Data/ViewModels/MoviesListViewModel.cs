@@ -1,7 +1,6 @@
-using System.Collections.Generic;
-using System.Linq;
+using CinemaBooking.Data.Models;
 
-namespace CinemaBooking.Models.ViewModels
+namespace CinemaBooking.Data.ViewModels
 {
     public class MoviesListViewModel
     {

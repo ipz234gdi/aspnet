@@ -1,5 +1,5 @@
 using Microsoft.AspNetCore.Mvc;
-using CinemaBooking.Models;
+using CinemaBooking.Data;
 
 namespace CinemaBooking.Components
 {
