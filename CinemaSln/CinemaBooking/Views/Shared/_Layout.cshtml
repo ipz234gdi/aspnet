@@ -14,12 +14,15 @@
             <div class="container">
                 <a class="navbar-brand" href="/">🎬 CinemaBooking</a>
                 <ul class="navbar-nav me-auto">
-                    <li class="nav-item">
-                        <a class="nav-link" href="/Movie">Фільми</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" href="/CinemaHall">Зали</a>
-                    </li>
+                    @if (User.IsInRole("Admin"))
+                    {
+                        <li class="nav-item">
+                            <a class="nav-link" href="/Movie">Фільми</a>
+                        </li>
+                        <li class="nav-item">
+                            <a class="nav-link" href="/CinemaHall">Зали</a>
+                        </li>
+                    }
                 </ul>
                 <div class="ms-auto d-flex align-items-center">
                     @if (User.Identity?.IsAuthenticated == true)
