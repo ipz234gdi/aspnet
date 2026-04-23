@@ -2,9 +2,11 @@
 
 <div class="app-layout">
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light">
+        <nav class="navbar navbar-expand-lg glass-panel fixed-top">
             <div class="container">
-                <a class="navbar-brand" href="/">CINEMA ADMIN</a>
+                <a class="navbar-brand" href="/">
+                    CINEMA<span class="text-accent">ADMIN</span>
+                </a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
                     <span class="navbar-toggler-icon"></span>
                 </button>
@@ -15,15 +17,15 @@
         </nav>
     </header>
 
-    <div class="container mt-4" style="flex: 1;">
-        <main role="main">
+    <div class="container pb-5 mt-4 pt-5" style="flex: 1;">
+        <main role="main" class="pb-3 mt-4">
             @Body
         </main>
     </div>
 
-    <footer class="py-4 mt-5 border-top">
+    <footer class="py-4 mt-auto border-top glass-panel">
         <div class="container text-center">
-            <span class="text-muted fw-medium">&copy; 2026 - Cinema Admin.</span>
+            <span class="text-muted fw-medium">&copy; 2026 - Cinema Admin</span>
         </div>
     </footer>
 </div>

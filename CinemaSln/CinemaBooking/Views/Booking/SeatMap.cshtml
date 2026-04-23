@@ -104,8 +104,17 @@
 
         connection.start().then(function () {
             updateStatus("connected");
+            connection.invoke("JoinMovieGroup", "@movie.MovieID").catch(function (err) {
+                return console.error(err.toString());
+            });
         }).catch(function (err) {
             updateStatus("disconnected");
+        });
+        
+        window.addEventListener("beforeunload", function () {
+            if (connection.state === signalR.HubConnectionState.Connected) {
+                connection.invoke("LeaveMovieGroup", "@movie.MovieID");
+            }
         });
 
         connection.onreconnecting(function () {

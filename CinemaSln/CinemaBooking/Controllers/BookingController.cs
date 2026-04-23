@@ -87,7 +87,7 @@ namespace CinemaBooking.Controllers
                     TicketPrice = movie.TicketPrice
                 });
 
-                await hubContext.Clients.All.SendAsync("SeatUpdated", movieId, row, seat, true);
+                await hubContext.Clients.Group($"Movie_{movieId}").SendAsync("SeatUpdated", movieId, row, seat, true);
             }
 
             HttpContext.Session.SetJson(GetCartKey(), cart);
@@ -126,7 +126,7 @@ namespace CinemaBooking.Controllers
                     globalSeats.Remove(seatLabel);
                 }
 
-                await hubContext.Clients.All.SendAsync("SeatUpdated", movieId, row, seat, false);
+                await hubContext.Clients.Group($"Movie_{movieId}").SendAsync("SeatUpdated", movieId, row, seat, false);
             }
             else
             {
@@ -157,7 +157,7 @@ namespace CinemaBooking.Controllers
                     TicketPrice = movie.TicketPrice
                 });
                 
-                await hubContext.Clients.All.SendAsync("SeatUpdated", movieId, row, seat, true);
+                await hubContext.Clients.Group($"Movie_{movieId}").SendAsync("SeatUpdated", movieId, row, seat, true);
                 isBooked = true;
             }
 
@@ -179,7 +179,7 @@ namespace CinemaBooking.Controllers
                 var parts = seat.Replace("Ряд ", "").Replace("Місце ", "").Split(", ");
                 if (parts.Length == 2 && int.TryParse(parts[0], out int row) && int.TryParse(parts[1], out int seatNum))
                 {
-                    await hubContext.Clients.All.SendAsync("SeatUpdated", movieId, row, seatNum, false);
+                    await hubContext.Clients.Group($"Movie_{movieId}").SendAsync("SeatUpdated", movieId, row, seatNum, false);
                 }
             }
 
@@ -199,7 +199,7 @@ namespace CinemaBooking.Controllers
                 var parts = item.Seat.Replace("Ряд ", "").Replace("Місце ", "").Split(", ");
                 if (parts.Length == 2 && int.TryParse(parts[0], out int row) && int.TryParse(parts[1], out int seatNum))
                 {
-                    await hubContext.Clients.All.SendAsync("SeatUpdated", item.MovieID, row, seatNum, false);
+                    await hubContext.Clients.Group($"Movie_{item.MovieID}").SendAsync("SeatUpdated", item.MovieID, row, seatNum, false);
                 }
             }
 

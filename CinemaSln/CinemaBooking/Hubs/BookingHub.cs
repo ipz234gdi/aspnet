@@ -4,14 +4,14 @@ namespace CinemaBooking.Hubs
 {
     public class BookingHub : Hub
     {
-        public async Task SeatBooked(long movieId, int row, int seat)
+        public async Task JoinMovieGroup(string movieId)
         {
-            await Clients.Others.SendAsync("SeatUpdated", movieId, row, seat, true);
+            await Groups.AddToGroupAsync(Context.ConnectionId, $"Movie_{movieId}");
         }
 
-        public async Task SeatReleased(long movieId, int row, int seat)
+        public async Task LeaveMovieGroup(string movieId)
         {
-            await Clients.Others.SendAsync("SeatUpdated", movieId, row, seat, false);
+            await Groups.RemoveFromGroupAsync(Context.ConnectionId, $"Movie_{movieId}");
         }
     }
 }

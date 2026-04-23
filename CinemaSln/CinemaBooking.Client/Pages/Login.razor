@@ -2,32 +2,43 @@
 @inject AuthService AuthService
 @inject NavigationManager Navigation
 
-<h3>Вхід</h3>
+<div class="row justify-content-center align-items-center" style="min-height: 70vh;">
+    <div class="col-md-6 col-lg-5">
+        <div class="card p-4 shadow-lg border-0" style="background: var(--glass-bg); backdrop-filter: blur(10px);">
+            <div class="text-center mb-4">
+                <h3 class="fw-bold mb-1">З поверненням</h3>
+                <p class="text-muted">Увійдіть до свого акаунту адміна</p>
+            </div>
 
-@if (errorMessage != null)
-{
-    <div class="alert alert-danger">@errorMessage</div>
-}
+            @if (errorMessage != null)
+            {
+                <div class="alert alert-danger shadow-sm py-2">@errorMessage</div>
+            }
 
-<EditForm Model="loginModel" OnValidSubmit="HandleLogin" FormName="loginForm">
-    <DataAnnotationsValidator />
-    <ValidationSummary class="text-danger" />
+            <EditForm Model="loginModel" OnValidSubmit="HandleLogin" FormName="loginForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger small mb-3" />
 
-    <div class="mb-3">
-        <label class="form-label">Ім'я користувача</label>
-        <InputText class="form-control" @bind-Value="loginModel.UserName" />
-        <ValidationMessage For="@(() => loginModel.UserName)" />
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Ім'я користувача</label>
+                    <InputText class="form-control form-control-lg bg-light" @bind-Value="loginModel.UserName" placeholder="Введіть логін" />
+                    <ValidationMessage For="@(() => loginModel.UserName)" class="text-danger small mt-1" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Пароль</label>
+                    <InputText class="form-control form-control-lg bg-light" type="password" @bind-Value="loginModel.Password" placeholder="Введіть пароль" />
+                    <ValidationMessage For="@(() => loginModel.Password)" class="text-danger small mt-1" />
+                </div>
+
+                <button type="submit" class="btn btn-primary btn-lg w-100 mb-3 fw-bold">Увійти</button>
+                <div class="text-center">
+                    <a href="register" class="text-decoration-none text-muted small">Немає акаунту? <span class="text-primary fw-semibold">Зареєструватись</span></a>
+                </div>
+            </EditForm>
+        </div>
     </div>
-
-    <div class="mb-3">
-        <label class="form-label">Пароль</label>
-        <InputText class="form-control" type="password" @bind-Value="loginModel.Password" />
-        <ValidationMessage For="@(() => loginModel.Password)" />
-    </div>
-
-    <button type="submit" class="btn btn-primary">Увійти</button>
-    <a href="register" class="btn btn-link">Немає акаунту? Зареєструватись</a>
-</EditForm>
+</div>
 
 @code {
     private LoginRequest loginModel = new();

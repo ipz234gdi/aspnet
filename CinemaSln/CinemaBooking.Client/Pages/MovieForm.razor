@@ -4,64 +4,73 @@
 @inject NavigationManager Navigation
 @attribute [Authorize(Roles = "Admin")]
 
-<h3>@(Id == null ? "Додати фільм" : "Редагувати фільм")</h3>
+<div class="row justify-content-center">
+    <div class="col-md-8 col-lg-6">
+        <div class="card p-4">
+            <h3 class="mb-4 text-center fw-bold">@(Id == null ? "Додати фільм" : "Редагувати фільм")</h3>
 
-@if (errorMessage != null)
-{
-    <div class="alert alert-danger">@errorMessage</div>
-}
-
-<EditForm Model="movie" OnValidSubmit="HandleSubmit" FormName="movieForm">
-    <DataAnnotationsValidator />
-    <ValidationSummary class="text-danger" />
-
-    <div class="mb-3">
-        <label class="form-label">Назва</label>
-        <InputText class="form-control" @bind-Value="movie.Title" />
-        <ValidationMessage For="@(() => movie.Title)" />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Опис</label>
-        <InputTextArea class="form-control" @bind-Value="movie.Description" />
-        <ValidationMessage For="@(() => movie.Description)" />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Жанр</label>
-        <InputText class="form-control" @bind-Value="movie.Genre" />
-        <ValidationMessage For="@(() => movie.Genre)" />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Ціна квитка</label>
-        <InputNumber class="form-control" @bind-Value="movie.TicketPrice" />
-        <ValidationMessage For="@(() => movie.TicketPrice)" />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">URL Постера (TMDB)</label>
-        <InputText class="form-control" @bind-Value="movie.ImageUrl" placeholder="https://image.tmdb.org/..." />
-        <ValidationMessage For="@(() => movie.ImageUrl)" />
-    </div>
-
-    <div class="mb-3">
-        <label class="form-label">Зал</label>
-        <InputSelect class="form-select" @bind-Value="movie.CinemaHallID">
-            <option value="">Оберіть зал</option>
-            @if (halls != null)
+            @if (errorMessage != null)
             {
-                @foreach (var hall in halls)
-                {
-                    <option value="@hall.CinemaHallID">@hall.Name</option>
-                }
+                <div class="alert alert-danger shadow-sm">@errorMessage</div>
             }
-        </InputSelect>
-    </div>
 
-    <button type="submit" class="btn btn-success">Зберегти</button>
-    <a href="movies" class="btn btn-secondary ms-2">Скасувати</a>
-</EditForm>
+            <EditForm Model="movie" OnValidSubmit="HandleSubmit" FormName="movieForm">
+                <DataAnnotationsValidator />
+                <ValidationSummary class="text-danger mb-3" />
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Назва</label>
+                    <InputText class="form-control" @bind-Value="movie.Title" />
+                    <ValidationMessage For="@(() => movie.Title)" class="text-danger small" />
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">Опис</label>
+                    <InputTextArea class="form-control" @bind-Value="movie.Description" rows="4" />
+                    <ValidationMessage For="@(() => movie.Description)" class="text-danger small" />
+                </div>
+
+                <div class="row">
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Жанр</label>
+                        <InputText class="form-control" @bind-Value="movie.Genre" />
+                        <ValidationMessage For="@(() => movie.Genre)" class="text-danger small" />
+                    </div>
+                    <div class="col-md-6 mb-3">
+                        <label class="form-label fw-semibold">Ціна квитка</label>
+                        <InputNumber class="form-control" @bind-Value="movie.TicketPrice" />
+                        <ValidationMessage For="@(() => movie.TicketPrice)" class="text-danger small" />
+                    </div>
+                </div>
+
+                <div class="mb-3">
+                    <label class="form-label fw-semibold">URL Постера (TMDB)</label>
+                    <InputText class="form-control" @bind-Value="movie.ImageUrl" placeholder="https://image.tmdb.org/..." />
+                    <ValidationMessage For="@(() => movie.ImageUrl)" class="text-danger small" />
+                </div>
+
+                <div class="mb-4">
+                    <label class="form-label fw-semibold">Зал</label>
+                    <InputSelect class="form-select" @bind-Value="movie.CinemaHallID">
+                        <option value="">Оберіть зал</option>
+                        @if (halls != null)
+                        {
+                            @foreach (var hall in halls)
+                            {
+                                <option value="@hall.CinemaHallID">@hall.Name</option>
+                            }
+                        }
+                    </InputSelect>
+                </div>
+
+                <div class="d-flex justify-content-between">
+                    <a href="movies" class="btn btn-outline-secondary">Скасувати</a>
+                    <button type="submit" class="btn btn-success px-4">Зберегти</button>
+                </div>
+            </EditForm>
+        </div>
+    </div>
+</div>
 
 @code {
     [Parameter] public long? Id { get; set; }
