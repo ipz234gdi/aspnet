@@ -1,0 +1,80 @@
+@page "/cinemahalls/create"
+@page "/cinemahalls/edit/{Id:long}"
+@inject HttpClient Http
+@inject NavigationManager Navigation
+@attribute [Authorize(Roles = "Admin")]
+
+<h3>@(Id == null ? "Додати зал" : "Редагувати зал")</h3>
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+<EditForm Model="hall" OnValidSubmit="HandleSubmit" FormName="hallForm">
+    <DataAnnotationsValidator />
+    <ValidationSummary class="text-danger" />
+
+    <div class="mb-3">
+        <label class="form-label">Назва</label>
+        <InputText class="form-control" @bind-Value="hall.Name" />
+        <ValidationMessage For="@(() => hall.Name)" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Місткість</label>
+        <InputNumber class="form-control" @bind-Value="hall.Capacity" />
+        <ValidationMessage For="@(() => hall.Capacity)" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Розташування</label>
+        <InputText class="form-control" @bind-Value="hall.Location" />
+        <ValidationMessage For="@(() => hall.Location)" />
+    </div>
+
+    <button type="submit" class="btn btn-success">Зберегти</button>
+    <a href="cinemahalls" class="btn btn-secondary ms-2">Скасувати</a>
+</EditForm>
+
+@code {
+    [Parameter] public long? Id { get; set; }
+
+    private CinemaHall hall = new();
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        if (Id != null)
+        {
+            var existing = await Http.GetFromJsonAsync<CinemaHall>($"api/cinemahalls/{Id}");
+            if (existing != null)
+            {
+                hall = existing;
+            }
+        }
+    }
+
+    private async Task HandleSubmit()
+    {
+        HttpResponseMessage response;
+
+        if (Id == null)
+        {
+            response = await Http.PostAsJsonAsync("api/cinemahalls", hall);
+        }
+        else
+        {
+            response = await Http.PutAsJsonAsync($"api/cinemahalls/{Id}", hall);
+        }
+
+        if (response.IsSuccessStatusCode)
+        {
+            Navigation.NavigateTo("/cinemahalls");
+        }
+        else
+        {
+            errorMessage = "Помилка збереження залу";
+        }
+    }
+}

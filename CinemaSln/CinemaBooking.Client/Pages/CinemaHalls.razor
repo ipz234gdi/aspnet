@@ -1,0 +1,90 @@
+@page "/cinemahalls"
+@inject HttpClient Http
+
+<h3>Кінозали</h3>
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+@if (halls == null)
+{
+    <p><em>Завантаження...</em></p>
+}
+else
+{
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <a href="cinemahalls/create" class="btn btn-primary mb-3">Додати зал</a>
+        </Authorized>
+    </AuthorizeView>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Назва</th>
+                <th>Місткість</th>
+                <th>Розташування</th>
+                <AuthorizeView Roles="Admin">
+                    <Authorized>
+                        <th>Дії</th>
+                    </Authorized>
+                </AuthorizeView>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var hall in halls)
+            {
+                <tr>
+                    <td>@hall.Name</td>
+                    <td>@hall.Capacity</td>
+                    <td>@hall.Location</td>
+                    <AuthorizeView Roles="Admin">
+                        <Authorized>
+                            <td>
+                                <a href="cinemahalls/edit/@hall.CinemaHallID" class="btn btn-sm btn-warning me-1">Редагувати</a>
+                                <button class="btn btn-sm btn-danger" @onclick="() => DeleteHall(hall.CinemaHallID!.Value)">Видалити</button>
+                            </td>
+                        </Authorized>
+                    </AuthorizeView>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<CinemaHall>? halls;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadHalls();
+    }
+
+    private async Task LoadHalls()
+    {
+        try
+        {
+            halls = await Http.GetFromJsonAsync<List<CinemaHall>>("api/cinemahalls");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Помилка завантаження: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteHall(long id)
+    {
+        var response = await Http.DeleteAsync($"api/cinemahalls/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadHalls();
+        }
+        else
+        {
+            errorMessage = "Помилка видалення залу";
+        }
+    }
+}

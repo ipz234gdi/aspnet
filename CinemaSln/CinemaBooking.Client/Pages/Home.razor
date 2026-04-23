@@ -1,0 +1,20 @@
+@page "/"
+
+<h3>Система бронювання кінотеатру</h3>
+
+<p>Ласкаво просимо до системи бронювання квитків на кіносеанси!</p>
+
+<p>Використовуйте навігацію зліва для перегляду фільмів та залів.</p>
+
+<AuthorizeView>
+    <Authorized>
+        <div class="alert alert-success mt-3">
+            Ви увійшли як <strong>@context.User.Identity?.Name</strong>
+        </div>
+    </Authorized>
+    <NotAuthorized>
+        <div class="alert alert-info mt-3">
+            <a href="login">Увійдіть</a> або <a href="register">зареєструйтесь</a> для повного доступу.
+        </div>
+    </NotAuthorized>
+</AuthorizeView>

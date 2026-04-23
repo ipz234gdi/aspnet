@@ -1,0 +1,94 @@
+@page "/movies"
+@inject HttpClient Http
+
+<h3>Фільми</h3>
+
+@if (errorMessage != null)
+{
+    <div class="alert alert-danger">@errorMessage</div>
+}
+
+@if (movies == null)
+{
+    <p><em>Завантаження...</em></p>
+}
+else
+{
+    <AuthorizeView Roles="Admin">
+        <Authorized>
+            <a href="movies/create" class="btn btn-primary mb-3">Додати фільм</a>
+        </Authorized>
+    </AuthorizeView>
+
+    <table class="table table-striped">
+        <thead>
+            <tr>
+                <th>Назва</th>
+                <th>Опис</th>
+                <th>Жанр</th>
+                <th>Ціна</th>
+                <th>Зал</th>
+                <AuthorizeView Roles="Admin">
+                    <Authorized>
+                        <th>Дії</th>
+                    </Authorized>
+                </AuthorizeView>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var movie in movies)
+            {
+                <tr>
+                    <td>@movie.Title</td>
+                    <td>@movie.Description</td>
+                    <td>@movie.Genre</td>
+                    <td>@movie.TicketPrice.ToString("F2") грн</td>
+                    <td>@(movie.CinemaHall?.Name ?? "—")</td>
+                    <AuthorizeView Roles="Admin">
+                        <Authorized>
+                            <td>
+                                <a href="movies/edit/@movie.MovieID" class="btn btn-sm btn-warning me-1">Редагувати</a>
+                                <button class="btn btn-sm btn-danger" @onclick="() => DeleteMovie(movie.MovieID!.Value)">Видалити</button>
+                            </td>
+                        </Authorized>
+                    </AuthorizeView>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+
+@code {
+    private List<Movie>? movies;
+    private string? errorMessage;
+
+    protected override async Task OnInitializedAsync()
+    {
+        await LoadMovies();
+    }
+
+    private async Task LoadMovies()
+    {
+        try
+        {
+            movies = await Http.GetFromJsonAsync<List<Movie>>("api/movies");
+        }
+        catch (Exception ex)
+        {
+            errorMessage = $"Помилка завантаження: {ex.Message}";
+        }
+    }
+
+    private async Task DeleteMovie(long id)
+    {
+        var response = await Http.DeleteAsync($"api/movies/{id}");
+        if (response.IsSuccessStatusCode)
+        {
+            await LoadMovies();
+        }
+        else
+        {
+            errorMessage = "Помилка видалення фільму";
+        }
+    }
+}
