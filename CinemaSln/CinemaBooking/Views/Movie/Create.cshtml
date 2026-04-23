@@ -26,6 +26,11 @@
                 <span asp-validation-for="TicketPrice" class="text-danger"></span>
             </div>
             <div class="mb-3">
+                <label asp-for="ImageUrl" class="form-label">URL Постера (TMDB)</label>
+                <input asp-for="ImageUrl" class="form-control" placeholder="https://image.tmdb.org/..." />
+                <span asp-validation-for="ImageUrl" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
                 <label asp-for="CinemaHallID" class="form-label">Зал</label>
                 <select asp-for="CinemaHallID" asp-items="@ViewBag.CinemaHalls" class="form-select">
                     <option value="">-- Оберіть зал --</option>

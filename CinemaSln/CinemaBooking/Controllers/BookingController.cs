@@ -90,6 +90,45 @@ namespace CinemaBooking.Controllers
         }
 
         [HttpPost]
+        public async Task<IActionResult> ToggleSeat(long movieId, int row, int seat)
+        {
+            var movie = repository.Movies.FirstOrDefault(m => m.MovieID == movieId);
+            if (movie == null) return NotFound();
+            var hall = repository.CinemaHalls.FirstOrDefault(h => h.CinemaHallID == movie.CinemaHallID);
+            string hallName = hall?.Name ?? "Невідомо";
+
+            var cart = HttpContext.Session.GetJson<BookingCart>(GetCartKey()) ?? new BookingCart();
+            string seatLabel = $"Ряд {row}, Місце {seat}";
+
+            var existingItem = cart.Items.FirstOrDefault(i => i.MovieID == movieId && i.Seat == seatLabel);
+            bool isBooked = false;
+
+            if (existingItem != null)
+            {
+                // Remove seat
+                cart.Items.Remove(existingItem);
+                await hubContext.Clients.All.SendAsync("SeatUpdated", movieId, row, seat, false);
+            }
+            else
+            {
+                // Add seat
+                cart.Items.Add(new CartItem
+                {
+                    MovieID = movie.MovieID ?? 0,
+                    Title = movie.Title,
+                    CinemaHallName = hallName,
+                    Seat = seatLabel,
+                    TicketPrice = movie.TicketPrice
+                });
+                await hubContext.Clients.All.SendAsync("SeatUpdated", movieId, row, seat, true);
+                isBooked = true;
+            }
+
+            HttpContext.Session.SetJson(GetCartKey(), cart);
+            return Json(new { success = true, isBooked });
+        }
+
+        [HttpPost]
         public async Task<IActionResult> RemoveSeat(long movieId, string seat)
         {
             var cart = HttpContext.Session.GetJson<BookingCart>(GetCartKey())

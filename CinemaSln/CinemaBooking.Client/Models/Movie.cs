@@ -22,6 +22,9 @@ namespace CinemaBooking.Client.Models
         [Range(0.01, double.MaxValue, ErrorMessage = "Ціна має бути додатною")]
         public decimal TicketPrice { get; set; }
 
+        [StringLength(500, ErrorMessage = "URL зображення не може перевищувати 500 символів")]
+        public string? ImageUrl { get; set; }
+
         public long? CinemaHallID { get; set; }
         public CinemaHall? CinemaHall { get; set; }
     }

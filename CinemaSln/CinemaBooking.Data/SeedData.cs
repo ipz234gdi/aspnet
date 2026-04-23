@@ -29,14 +29,14 @@ namespace CinemaBooking.Data
                 if (!context.Movies.Any())
                 {
                     context.Movies.AddRange(
-                        new Movie { Title = "Дюна: Частина друга", Description = "Продовження епічної саги.", Genre = "Фантастика", TicketPrice = 250m, CinemaHallID = hall1.CinemaHallID },
-                        new Movie { Title = "Дедпул і Росомаха", Description = "Нові пригоди улюблених героїв.", Genre = "Бойовик", TicketPrice = 200m, CinemaHallID = hall1.CinemaHallID },
-                        new Movie { Title = "Думками навиворіт 2", Description = "Нові емоції в голові Райлі.", Genre = "Мультфільм", TicketPrice = 180m, CinemaHallID = hall2.CinemaHallID },
-                        new Movie { Title = "Оппенгеймер", Description = "Історія створення атомної бомби.", Genre = "Біографія", TicketPrice = 220m, CinemaHallID = hall2.CinemaHallID },
-                        new Movie { Title = "Аватар: Шлях води", Description = "Повернення на Пандору.", Genre = "Фантастика", TicketPrice = 270m, CinemaHallID = hall3.CinemaHallID },
-                        new Movie { Title = "Джон Вік 4", Description = "Фінальний розділ легендарного кілера.", Genre = "Бойовик", TicketPrice = 210m, CinemaHallID = hall3.CinemaHallID },
-                        new Movie { Title = "Елементарно", Description = "Історія дружби вогню та води.", Genre = "Мультфільм", TicketPrice = 160m, CinemaHallID = hall1.CinemaHallID },
-                        new Movie { Title = "Наполеон", Description = "Епічна історія французького імператора.", Genre = "Біографія", TicketPrice = 230m, CinemaHallID = hall2.CinemaHallID }
+                        new Movie { Title = "Дюна: Частина друга", Description = "Продовження епічної саги Дені Вільньова. Пол Атрейдес об'єднується з фрименами для помсти тим, хто знищив його родину.", Genre = "Фантастика", TicketPrice = 250m, CinemaHallID = hall1.CinemaHallID, ImageUrl = "https://image.tmdb.org/t/p/w500/8b8R8l88Qje9dn9OE8PY05Nez7Y.jpg" },
+                        new Movie { Title = "Дедпул і Росомаха", Description = "Найочікуваніший кросовер Marvel. Уейд Вілсон повертається з новим партнером — Логаном.", Genre = "Бойовик", TicketPrice = 200m, CinemaHallID = hall1.CinemaHallID, ImageUrl = "https://image.tmdb.org/t/p/w500/8cdWjvZQUExUUTzyp4t6EDMubfO.jpg" },
+                        new Movie { Title = "Думками навиворіт 2", Description = "Райлі стає підлітком і в її голові з'являються нові емоції: Тривога, Заздрість, Нудьга та Сором.", Genre = "Мультфільм", TicketPrice = 180m, CinemaHallID = hall2.CinemaHallID, ImageUrl = "https://image.tmdb.org/t/p/w500/vpnVM9B6NMmQpWeZvzLvDESb2QY.jpg" },
+                        new Movie { Title = "Оппенгеймер", Description = "Епічна біографічна драма Крістофера Нолана про фізика Роберта Оппенгеймера та створення атомної бомби.", Genre = "Біографія", TicketPrice = 220m, CinemaHallID = hall2.CinemaHallID, ImageUrl = "https://image.tmdb.org/t/p/w500/8Gxv8gSFCU0XGDykEGv7zR1n2ua.jpg" },
+                        new Movie { Title = "Аватар: Шлях води", Description = "Джейк Саллі живе з новою сім'єю на Пандорі. Коли знайома загроза повертається, він змушений битися з людьми.", Genre = "Фантастика", TicketPrice = 270m, CinemaHallID = hall3.CinemaHallID, ImageUrl = "https://image.tmdb.org/t/p/w500/t6HIqrRAclMCA60NsSmeqe9RmNV.jpg" },
+                        new Movie { Title = "Джон Вік 4", Description = "Легендарний кілер Джон Вік знаходить шлях до перемоги над Високим Столом, але ціна може бути надто високою.", Genre = "Бойовик", TicketPrice = 210m, CinemaHallID = hall3.CinemaHallID, ImageUrl = "https://image.tmdb.org/t/p/w500/vZloFAK7NmvMGKE7LsyBGSME9Yd.jpg" },
+                        new Movie { Title = "Елементарно", Description = "У місті, де мешкають елементи вогню, води, землі та повітря, палка Ембер і спокійний Вейд відкривають, що вони мають більше спільного, ніж здається.", Genre = "Мультфільм", TicketPrice = 160m, CinemaHallID = hall1.CinemaHallID, ImageUrl = "https://image.tmdb.org/t/p/w500/6oH3DpyGNjItEbqhIBj0hgjiCr.jpg" },
+                        new Movie { Title = "Наполеон", Description = "Грандіозна історія французького імператора Наполеона Бонапарта — від сходження до влади до поразки при Ватерлоо.", Genre = "Біографія", TicketPrice = 230m, CinemaHallID = hall2.CinemaHallID, ImageUrl = "https://image.tmdb.org/t/p/w500/jE5skGMI99hEJdFCdYkiWDBGJDH.jpg" }
                     );
                     context.SaveChanges();
                 }

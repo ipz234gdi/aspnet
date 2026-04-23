@@ -1,283 +1,182 @@
+@model dynamic
 @{
-    var movie = (CinemaBooking.Data.Models.Movie)ViewBag.Movie;
-    var hallName = (string)ViewBag.HallName;
-    int rows = (int)ViewBag.Rows;
-    int seatsPerRow = (int)ViewBag.SeatsPerRow;
-    var myBookedSeats = (List<string>)ViewBag.MyBookedSeats;
+    ViewData["Title"] = "Схема місць";
+    var movie = ViewBag.Movie as CinemaBooking.Data.Models.Movie;
+    var hallName = ViewBag.HallName as string;
+    var rows = (int)ViewBag.Rows;
+    var seatsPerRow = (int)ViewBag.SeatsPerRow;
+    var myBookedSeats = ViewBag.MyBookedSeats as List<string>;
 }
 
-<h2 class="display-6 mb-2">Схема місць: @movie.Title</h2>
-<p class="text-muted mb-2">Зал: @hallName | Ціна: @movie.TicketPrice.ToString("c")</p>
-<div class="mb-3">
-    <span id="connection-status" class="badge bg-warning">Підключення...</span>
+<div class="mb-4">
+    <a href="/" class="btn btn-outline-secondary btn-sm mb-3">
+        &larr; Назад до фільмів
+    </a>
+    <div class="section-header">
+        <h2>@movie.Title</h2>
+        <p>Зал: @hallName &bull; Ціна квитка: @movie.TicketPrice.ToString("c")</p>
+    </div>
 </div>
 
-<div class="seat-map-container mb-4">
-    <div class="screen mb-4">
-        <div class="screen-label">ЕКРАН</div>
+<div class="d-flex justify-content-center mb-4">
+    <div id="connection-status" class="badge bg-warning text-dark py-2 px-3">Підключення до залу...</div>
+</div>
+
+<div class="seat-map-container">
+    <div class="screen">
+        <div class="screen-label">Екран</div>
     </div>
 
     <div class="seat-grid">
         @for (int r = 1; r <= rows; r++)
         {
             <div class="seat-row">
-                <span class="row-label">Ряд @r</span>
+                <div class="row-label">Ряд @r</div>
                 @for (int s = 1; s <= seatsPerRow; s++)
                 {
                     string seatLabel = $"Ряд {r}, Місце {s}";
-                    bool isMyBooked = myBookedSeats.Contains(seatLabel);
-                    string cssClass = isMyBooked ? "seat booked-mine" : "seat available";
-                    <button class="@cssClass"
+                    bool isMine = myBookedSeats.Contains(seatLabel);
+                    string cssClass = isMine ? "booked-mine" : "available";
+
+                    <button type="button"
+                            class="seat @cssClass"
                             data-row="@r"
                             data-seat="@s"
-                            data-movie-id="@movie.MovieID"
                             onclick="toggleSeat(this, @movie.MovieID, @r, @s)">
                         @s
                     </button>
                 }
+                <div class="row-label text-end">Ряд @r</div>
             </div>
         }
     </div>
 
-    <div class="seat-legend mt-4">
+    <div class="seat-legend">
         <div class="legend-item">
-            <span class="seat-sample available"></span> Вільне
+            <span class="seat-sample available"></span> Вільно
         </div>
         <div class="legend-item">
-            <span class="seat-sample booked-mine"></span> Ваше бронювання
+            <span class="seat-sample booked-mine"></span> Ваше
         </div>
         <div class="legend-item">
-            <span class="seat-sample booked-other"></span> Зайнято іншим
+            <span class="seat-sample booked-other"></span> Зайнято
         </div>
     </div>
 </div>
 
-<div id="notification-area"></div>
+@section Scripts {
+    <script src="~/lib/microsoft/signalr/dist/browser/signalr.min.js"></script>
+    <script>
+        var connection = new signalR.HubConnectionBuilder()
+            .withUrl("/bookinghub")
+            .withAutomaticReconnect()
+            .build();
 
-<a href="/Booking" class="btn btn-outline-primary">Мої бронювання</a>
-<a href="/" class="btn btn-outline-secondary ms-2">До списку фільмів</a>
+        connection.on("SeatUpdated", function (movieId, row, seat, isBooked) {
+            if (movieId != @movie.MovieID) return;
 
-<style>
-    .seat-map-container {
-        max-width: 700px;
-        margin: 0 auto;
-    }
-    .screen {
-        background: linear-gradient(135deg, #667eea, #764ba2);
-        border-radius: 8px;
-        padding: 10px;
-        text-align: center;
-    }
-    .screen-label {
-        color: white;
-        font-weight: 600;
-        letter-spacing: 4px;
-    }
-    .seat-grid {
-        display: flex;
-        flex-direction: column;
-        align-items: center;
-        gap: 8px;
-    }
-    .seat-row {
-        display: flex;
-        align-items: center;
-        gap: 6px;
-    }
-    .row-label {
-        width: 60px;
-        font-size: 0.85rem;
-        font-weight: 500;
-        color: #6c757d;
-    }
-    .seat {
-        width: 40px;
-        height: 40px;
-        border: none;
-        border-radius: 6px;
-        font-size: 0.8rem;
-        font-weight: 600;
-        cursor: pointer;
-        transition: all 0.3s ease;
-    }
-    .seat.available {
-        background: #e8f5e9;
-        color: #388e3c;
-    }
-    .seat.available:hover {
-        background: #66bb6a;
-        color: white;
-        transform: scale(1.1);
-    }
-    .seat.booked-mine {
-        background: #1976d2;
-        color: white;
-    }
-    .seat.booked-mine:hover {
-        background: #1565c0;
-        transform: scale(1.1);
-    }
-    .seat.booked-other {
-        background: #ef5350;
-        color: white;
-        cursor: not-allowed;
-    }
-    .seat-legend {
-        display: flex;
-        justify-content: center;
-        gap: 24px;
-    }
-    .legend-item {
-        display: flex;
-        align-items: center;
-        gap: 8px;
-        font-size: 0.9rem;
-    }
-    .seat-sample {
-        width: 24px;
-        height: 24px;
-        border-radius: 4px;
-        display: inline-block;
-    }
-    .seat-sample.available {
-        background: #e8f5e9;
-        border: 1px solid #388e3c;
-    }
-    .seat-sample.booked-mine {
-        background: #1976d2;
-    }
-    .seat-sample.booked-other {
-        background: #ef5350;
-    }
-    .notification {
-        position: fixed;
-        top: 20px;
-        right: 20px;
-        padding: 12px 20px;
-        border-radius: 8px;
-        color: white;
-        font-weight: 500;
-        z-index: 9999;
-        animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
-    }
-    .notification.booked {
-        background: #ef5350;
-    }
-    .notification.released {
-        background: #66bb6a;
-    }
-    @@keyframes slideIn {
-        from { transform: translateX(100%); opacity: 0; }
-        to { transform: translateX(0); opacity: 1; }
-    }
-    @@keyframes fadeOut {
-        from { opacity: 1; }
-        to { opacity: 0; }
-    }
-</style>
-
-<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
-<script>
-    var connection = new signalR.HubConnectionBuilder()
-        .withUrl("/bookinghub")
-        .withAutomaticReconnect()
-        .build();
-
-    connection.on("SeatUpdated", function (movieId, row, seat, isBooked) {
-        var currentMovieId = @movie.MovieID;
-        if (movieId !== currentMovieId) return;
-
-        var seatBtn = document.querySelector(
-            'button[data-row="' + row + '"][data-seat="' + seat + '"]'
-        );
-        if (seatBtn) {
-            if (isBooked) {
-                if (!seatBtn.classList.contains("booked-mine")) {
-                    seatBtn.className = "seat booked-other";
-                    seatBtn.onclick = null;
+            var btn = document.querySelector(`.seat[data-row='${row}'][data-seat='${seat}']`);
+            if (btn) {
+                if (btn.classList.contains("booked-mine") && isBooked) {
+                    // It's mine, keep it
+                    return;
                 }
+                
+                if (isBooked) {
+                    btn.className = "seat booked-other";
+                } else {
+                    btn.className = "seat available";
+                }
+                
+                showNotification(row, seat, isBooked);
+            }
+        });
+
+        connection.start().then(function () {
+            updateStatus("connected");
+        }).catch(function (err) {
+            updateStatus("disconnected");
+        });
+
+        connection.onreconnecting(function () {
+            updateStatus("reconnecting");
+        });
+
+        connection.onreconnected(function () {
+            updateStatus("connected");
+        });
+
+        connection.onclose(function () {
+            updateStatus("disconnected");
+        });
+
+        function updateStatus(state) {
+            var el = document.getElementById("connection-status");
+            if (state === "connected") {
+                el.className = "badge bg-success";
+                el.textContent = "Live: Оновлення в реальному часі";
+            } else if (state === "reconnecting") {
+                el.className = "badge bg-warning text-dark";
+                el.textContent = "Перепідключення...";
             } else {
-                if (seatBtn.classList.contains("booked-other")) {
-                    seatBtn.className = "seat available";
-                    seatBtn.onclick = function () {
-                        toggleSeat(seatBtn, movieId, row, seat);
-                    };
-                }
+                el.className = "badge bg-danger";
+                el.textContent = "Відключено від залу";
             }
         }
 
-        showNotification(row, seat, isBooked);
-    });
+        function toggleSeat(btn, movieId, row, seat) {
+            if (btn.classList.contains("booked-other")) return;
 
-    connection.start().then(function () {
-        updateStatus("connected");
-    }).catch(function (err) {
-        updateStatus("disconnected");
-    });
+            // Optimistic update
+            var wasMine = btn.classList.contains("booked-mine");
+            
+            if (wasMine) {
+                btn.className = "seat available";
+            } else {
+                btn.className = "seat booked-mine";
+            }
 
-    connection.onreconnecting(function () {
-        updateStatus("reconnecting");
-    });
-
-    connection.onreconnected(function () {
-        updateStatus("connected");
-    });
-
-    connection.onclose(function () {
-        updateStatus("disconnected");
-    });
-
-    function updateStatus(state) {
-        var el = document.getElementById("connection-status");
-        if (state === "connected") {
-            el.className = "badge bg-success";
-            el.textContent = "Підключено (реальний час)";
-        } else if (state === "reconnecting") {
-            el.className = "badge bg-warning";
-            el.textContent = "Перепідключення...";
-        } else {
-            el.className = "badge bg-danger";
-            el.textContent = "Відключено";
-        }
-    }
-
-    function toggleSeat(btn, movieId, row, seat) {
-        if (btn.classList.contains("booked-other")) return;
-
-        var form = document.createElement("form");
-        form.method = "POST";
-        form.action = "/Booking/AddSeat";
-
-        var fields = { movieId: movieId, row: row, seat: seat };
-        for (var key in fields) {
-            var input = document.createElement("input");
-            input.type = "hidden";
-            input.name = key;
-            input.value = fields[key];
-            form.appendChild(input);
+            fetch('/Booking/ToggleSeat', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/x-www-form-urlencoded',
+                    'X-Requested-With': 'XMLHttpRequest'
+                },
+                body: new URLSearchParams({
+                    movieId: movieId,
+                    row: row,
+                    seat: seat
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (!data.success) {
+                    // Revert on failure
+                    btn.className = wasMine ? "seat booked-mine" : "seat available";
+                } else {
+                    // Sync with server state
+                    btn.className = data.isBooked ? "seat booked-mine" : "seat available";
+                }
+            })
+            .catch(err => {
+                console.error('Error toggling seat:', err);
+                // Revert on error
+                btn.className = wasMine ? "seat booked-mine" : "seat available";
+            });
         }
 
-        var token = document.querySelector('input[name="__RequestVerificationToken"]');
-        if (token) {
-            var t = document.createElement("input");
-            t.type = "hidden";
-            t.name = "__RequestVerificationToken";
-            t.value = token.value;
-            form.appendChild(t);
+        function showNotification(row, seat, isBooked) {
+            var div = document.createElement("div");
+            div.className = "notification " + (isBooked ? "booked" : "released");
+            div.textContent = `Місце (Ряд ${row}, Місце ${seat}) було ${isBooked ? 'заброньовано' : 'звільнено'}.`;
+            
+            document.body.appendChild(div);
+            
+            setTimeout(() => {
+                if (div.parentNode) {
+                    div.parentNode.removeChild(div);
+                }
+            }, 3000);
         }
-
-        document.body.appendChild(form);
-        form.submit();
-    }
-
-    function showNotification(row, seat, isBooked) {
-        var area = document.getElementById("notification-area");
-        var div = document.createElement("div");
-        div.className = "notification " + (isBooked ? "booked" : "released");
-        div.textContent = isBooked
-            ? "Місце Ряд " + row + ", Місце " + seat + " заброньовано іншим користувачем"
-            : "Місце Ряд " + row + ", Місце " + seat + " звільнено";
-        document.body.appendChild(div);
-        setTimeout(function () { div.remove(); }, 3000);
-    }
-</script>
+    </script>
+}

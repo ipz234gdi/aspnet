@@ -1,24 +1,49 @@
 @model CinemaBooking.Data.ViewModels.MoviesListViewModel
 
-<div class="text-center mb-4">
-    <h2 class="display-6">Доступні кіносеанси</h2>
+@{
+    ViewData["Title"] = "Домашня сторінка";
+}
+
+<div class="section-header text-center mb-5">
+    <h2>Зараз у кіно</h2>
+    <p>Оберіть фільм та забронюйте улюблене місце в залі онлайн</p>
 </div>
 
 <div class="row">
-    @foreach (var m in Model.Movies)
-    {
-        <partial name="MovieSummary" model="m" />
-    }
-</div>
-
-<nav aria-label="Page navigation" class="mt-4">
-    <ul class="pagination justify-content-center">
-        @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+    <div class="col-lg-2 col-md-3 mb-4">
+        @await Component.InvokeAsync("NavigationMenu")
+    </div>
+    
+    <div class="col-lg-10 col-md-9">
+        @if (!Model.Movies.Any())
         {
-            <li class="page-item @(i == Model.PagingInfo.CurrentPage ? "active" : "")">
-                <a class="page-link"
-                   href="/?moviePage=@i@(Model.CurrentGenre != null ? "&genre=" + Model.CurrentGenre : "")">@i</a>
-            </li>
+            <div class="text-center py-5 text-muted">
+                <h4>На жаль, фільмів у цій категорії не знайдено</h4>
+            </div>
         }
-    </ul>
-</nav>
+        else
+        {
+            <div class="movie-grid">
+                @foreach (var m in Model.Movies)
+                {
+                    <partial name="MovieSummary" model="m" />
+                }
+            </div>
+
+            @if (Model.PagingInfo.TotalPages > 1)
+            {
+                <nav aria-label="Page navigation" class="mt-5">
+                    <ul class="pagination justify-content-center">
+                        @for (int i = 1; i <= Model.PagingInfo.TotalPages; i++)
+                        {
+                            <li class="page-item @(i == Model.PagingInfo.CurrentPage ? "active" : "")">
+                                <a class="page-link"
+                                   href="/?moviePage=@i@(Model.CurrentGenre != null ? "&genre=" + Model.CurrentGenre : "")">@i</a>
+                            </li>
+                        }
+                    </ul>
+                </nav>
+            }
+        }
+    </div>
+</div>
