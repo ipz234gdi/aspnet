@@ -1,0 +1,252 @@
+@{
+    var movie = (CinemaBooking.Data.Models.Movie)ViewBag.Movie;
+    var hallName = (string)ViewBag.HallName;
+    int rows = (int)ViewBag.Rows;
+    int seatsPerRow = (int)ViewBag.SeatsPerRow;
+    var myBookedSeats = (List<string>)ViewBag.MyBookedSeats;
+}
+
+<h2 class="display-6 mb-2">Схема місць: @movie.Title</h2>
+<p class="text-muted mb-4">Зал: @hallName | Ціна: @movie.TicketPrice.ToString("c")</p>
+
+<div class="seat-map-container mb-4">
+    <div class="screen mb-4">
+        <div class="screen-label">ЕКРАН</div>
+    </div>
+
+    <div class="seat-grid">
+        @for (int r = 1; r <= rows; r++)
+        {
+            <div class="seat-row">
+                <span class="row-label">Ряд @r</span>
+                @for (int s = 1; s <= seatsPerRow; s++)
+                {
+                    string seatLabel = $"Ряд {r}, Місце {s}";
+                    bool isMyBooked = myBookedSeats.Contains(seatLabel);
+                    string cssClass = isMyBooked ? "seat booked-mine" : "seat available";
+                    <button class="@cssClass"
+                            data-row="@r"
+                            data-seat="@s"
+                            data-movie-id="@movie.MovieID"
+                            onclick="toggleSeat(this, @movie.MovieID, @r, @s)">
+                        @s
+                    </button>
+                }
+            </div>
+        }
+    </div>
+
+    <div class="seat-legend mt-4">
+        <div class="legend-item">
+            <span class="seat-sample available"></span> Вільне
+        </div>
+        <div class="legend-item">
+            <span class="seat-sample booked-mine"></span> Ваше бронювання
+        </div>
+        <div class="legend-item">
+            <span class="seat-sample booked-other"></span> Зайнято іншим
+        </div>
+    </div>
+</div>
+
+<div id="notification-area"></div>
+
+<a href="/Booking" class="btn btn-outline-primary">Мої бронювання</a>
+<a href="/" class="btn btn-outline-secondary ms-2">До списку фільмів</a>
+
+<style>
+    .seat-map-container {
+        max-width: 700px;
+        margin: 0 auto;
+    }
+    .screen {
+        background: linear-gradient(135deg, #667eea, #764ba2);
+        border-radius: 8px;
+        padding: 10px;
+        text-align: center;
+    }
+    .screen-label {
+        color: white;
+        font-weight: 600;
+        letter-spacing: 4px;
+    }
+    .seat-grid {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 8px;
+    }
+    .seat-row {
+        display: flex;
+        align-items: center;
+        gap: 6px;
+    }
+    .row-label {
+        width: 60px;
+        font-size: 0.85rem;
+        font-weight: 500;
+        color: #6c757d;
+    }
+    .seat {
+        width: 40px;
+        height: 40px;
+        border: none;
+        border-radius: 6px;
+        font-size: 0.8rem;
+        font-weight: 600;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+    .seat.available {
+        background: #e8f5e9;
+        color: #388e3c;
+    }
+    .seat.available:hover {
+        background: #66bb6a;
+        color: white;
+        transform: scale(1.1);
+    }
+    .seat.booked-mine {
+        background: #1976d2;
+        color: white;
+    }
+    .seat.booked-mine:hover {
+        background: #1565c0;
+        transform: scale(1.1);
+    }
+    .seat.booked-other {
+        background: #ef5350;
+        color: white;
+        cursor: not-allowed;
+    }
+    .seat-legend {
+        display: flex;
+        justify-content: center;
+        gap: 24px;
+    }
+    .legend-item {
+        display: flex;
+        align-items: center;
+        gap: 8px;
+        font-size: 0.9rem;
+    }
+    .seat-sample {
+        width: 24px;
+        height: 24px;
+        border-radius: 4px;
+        display: inline-block;
+    }
+    .seat-sample.available {
+        background: #e8f5e9;
+        border: 1px solid #388e3c;
+    }
+    .seat-sample.booked-mine {
+        background: #1976d2;
+    }
+    .seat-sample.booked-other {
+        background: #ef5350;
+    }
+    .notification {
+        position: fixed;
+        top: 20px;
+        right: 20px;
+        padding: 12px 20px;
+        border-radius: 8px;
+        color: white;
+        font-weight: 500;
+        z-index: 9999;
+        animation: slideIn 0.3s ease, fadeOut 0.3s ease 2.7s forwards;
+    }
+    .notification.booked {
+        background: #ef5350;
+    }
+    .notification.released {
+        background: #66bb6a;
+    }
+    @@keyframes slideIn {
+        from { transform: translateX(100%); opacity: 0; }
+        to { transform: translateX(0); opacity: 1; }
+    }
+    @@keyframes fadeOut {
+        from { opacity: 1; }
+        to { opacity: 0; }
+    }
+</style>
+
+<script src="https://cdnjs.cloudflare.com/ajax/libs/microsoft-signalr/8.0.7/signalr.min.js"></script>
+<script>
+    var connection = new signalR.HubConnectionBuilder()
+        .withUrl("/bookinghub")
+        .withAutomaticReconnect()
+        .build();
+
+    connection.on("SeatUpdated", function (movieId, row, seat, isBooked) {
+        var currentMovieId = @movie.MovieID;
+        if (movieId !== currentMovieId) return;
+
+        var seatBtn = document.querySelector(
+            'button[data-row="' + row + '"][data-seat="' + seat + '"]'
+        );
+        if (seatBtn) {
+            if (isBooked) {
+                if (!seatBtn.classList.contains("booked-mine")) {
+                    seatBtn.className = "seat booked-other";
+                    seatBtn.onclick = null;
+                }
+            } else {
+                if (seatBtn.classList.contains("booked-other")) {
+                    seatBtn.className = "seat available";
+                    seatBtn.onclick = function () {
+                        toggleSeat(seatBtn, movieId, row, seat);
+                    };
+                }
+            }
+        }
+
+        showNotification(row, seat, isBooked);
+    });
+
+    connection.start().catch(function (err) {
+        console.error(err.toString());
+    });
+
+    function toggleSeat(btn, movieId, row, seat) {
+        if (btn.classList.contains("booked-other")) return;
+
+        var form = document.createElement("form");
+        form.method = "POST";
+        form.action = "/Booking/AddSeat";
+
+        var fields = { movieId: movieId, row: row, seat: seat };
+        for (var key in fields) {
+            var input = document.createElement("input");
+            input.type = "hidden";
+            input.name = key;
+            input.value = fields[key];
+            form.appendChild(input);
+        }
+
+        var token = document.querySelector('input[name="__RequestVerificationToken"]');
+        if (token) {
+            var t = document.createElement("input");
+            t.type = "hidden";
+            t.name = "__RequestVerificationToken";
+            t.value = token.value;
+            form.appendChild(t);
+        }
+
+        document.body.appendChild(form);
+        form.submit();
+    }
+
+    function showNotification(row, seat, isBooked) {
+        var area = document.getElementById("notification-area");
+        var div = document.createElement("div");
+        div.className = "notification " + (isBooked ? "booked" : "released");
+        div.textContent = isBooked
+            ? "Місце Ряд " + row + ", Місце " + seat + " заброньовано іншим користувачем"
+            : "Місце Ряд " + row + ", Місце " + seat + " звільнено";
+        document.body.appendChild(div);
+        setTimeout(function () { div.remove(); }, 3000);
+    }
+</script>

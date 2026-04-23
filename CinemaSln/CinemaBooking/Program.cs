@@ -1,6 +1,7 @@
 using Microsoft.EntityFrameworkCore;
 using Microsoft.AspNetCore.Identity;
 using CinemaBooking.Data;
+using CinemaBooking.Hubs;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -29,6 +30,7 @@ builder.Services.AddScoped<ICinemaRepository, EFCinemaRepository>();
 builder.Services.AddRazorPages();
 builder.Services.AddDistributedMemoryCache();
 builder.Services.AddSession();
+builder.Services.AddSignalR();
 
 builder.Services.ConfigureApplicationCookie(opts => {
     opts.LoginPath = "/Account/Login";
@@ -43,6 +45,7 @@ app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapDefaultControllerRoute();
+app.MapHub<BookingHub>("/bookinghub");
 
 SeedData.EnsurePopulated(app);
 IdentitySeedData.EnsurePopulated(app).Wait();
