@@ -27,6 +27,9 @@ namespace CinemaBooking.Data.Models
         [StringLength(500, ErrorMessage = "URL зображення не може перевищувати 500 символів")]
         public string? ImageUrl { get; set; }
 
+        [Required(ErrorMessage = "Оберіть дату та час сеансу")]
+        public DateTime ShowDate { get; set; } = DateTime.Today.AddDays(1).AddHours(18);
+
         public long? CinemaHallID { get; set; }
         public CinemaHall? CinemaHall { get; set; }
     }

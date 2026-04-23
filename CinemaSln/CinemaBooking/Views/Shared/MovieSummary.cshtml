@@ -3,31 +3,33 @@
 <div class="movie-card">
     @if (!string.IsNullOrEmpty(Model.ImageUrl))
     {
-        <img src="@Model.ImageUrl" alt="@Model.Title" class="poster" loading="lazy" />
+        <img src="@Model.ImageUrl" alt="@Model.Title" class="poster" loading="lazy" onerror="this.onerror=null;this.src='https://dummyimage.com/500x750/1e1e24/71717a&text=Постер+Відсутній';" />
     }
     else
     {
-        <div class="poster-placeholder">
-            <span>🎬</span>
+        <div class="poster-placeholder" style="height: 400px; display: flex; align-items: center; justify-content: center; background: rgba(255,255,255,0.05);">
+            <span style="font-size: 3rem; color: rgba(255,255,255,0.2);">🎬</span>
         </div>
     }
     
+    <div class="movie-date-badge">
+        <span class="day">@Model.ShowDate.ToString("dd")</span>
+        <span class="time">@Model.ShowDate.ToString("HH:mm")</span>
+    </div>
+
     <div class="card-info">
         <span class="movie-genre">@Model.Genre</span>
         <h3 class="movie-title">@Model.Title</h3>
         <p class="movie-desc">@Model.Description</p>
         
-        <div class="card-footer-row">
+        <div class="card-footer-row mt-auto">
             <div>
                 <div class="movie-price">@Model.TicketPrice.ToString("c")</div>
-                <div class="movie-hall">Зал: @(Model.CinemaHall?.Name ?? "Не призначено")</div>
+                <div class="text-secondary small fw-bold mt-1">Зал: @(Model.CinemaHall?.Name ?? "Не призначено")</div>
             </div>
             
-            <a href="/Booking/SeatMap?movieId=@Model.MovieID" class="btn-book">
-                <span>Обрати місце</span>
-                <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" viewBox="0 0 16 16">
-                  <path fill-rule="evenodd" d="M4 8a.5.5 0 0 1 .5-.5h5.793L8.146 5.354a.5.5 0 1 1 .708-.708l3 3a.5.5 0 0 1 0 .708l-3 3a.5.5 0 0 1-.708-.708L10.293 8.5H4.5A.5.5 0 0 1 4 8z"/>
-                </svg>
+            <a href="/Booking/SeatMap?movieId=@Model.MovieID" class="btn btn-primary">
+                Квитки
             </a>
         </div>
     </div>

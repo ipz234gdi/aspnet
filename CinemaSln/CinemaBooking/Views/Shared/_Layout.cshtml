@@ -6,11 +6,19 @@
     <title>@ViewData["Title"] - CinemaBooking</title>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap" rel="stylesheet" />
     <link href="~/lib/bootstrap/css/bootstrap.min.css" rel="stylesheet" />
-    <link href="~/css/site.css" rel="stylesheet" />
+    <link href="~/css/site.css" rel="stylesheet" asp-append-version="true" />
+    
+    <script>
+        // Prevent FOUC: Apply theme before body renders
+        const currentTheme = localStorage.getItem('theme') || 'light';
+        if (currentTheme === 'dark') {
+            document.documentElement.classList.add('dark-theme');
+        }
+    </script>
 </head>
-<body>
+<body class="d-flex flex-column min-vh-100">
     <header>
-        <nav class="navbar navbar-expand-lg navbar-light">
+        <nav class="navbar navbar-expand-lg navbar-light glass-panel sticky-top">
             <div class="container">
                 <a class="navbar-brand" href="/">CINEMA BOOKING</a>
                 <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
@@ -56,25 +64,46 @@
                             <a href="/Account/Login" class="btn btn-outline-secondary">Увійти</a>
                             <a href="/Account/Register" class="btn btn-primary">Реєстрація</a>
                         }
+                        
+                        <button id="themeToggleBtn" class="theme-toggle-btn">Темна тема</button>
                     </div>
                 </div>
             </div>
         </nav>
     </header>
 
-    <div class="container mt-4" style="flex: 1;">
-        <main role="main">
+    <div class="container pb-5 mt-4">
+        <main role="main" class="pb-3">
             @RenderBody()
         </main>
     </div>
 
-    <footer class="py-4 mt-5 border-top">
+    <footer class="py-4 mt-auto border-top glass-panel">
         <div class="container text-center">
-            <span class="text-muted fw-medium">&copy; 2026 - CinemaBooking. Minimalism meets functionality.</span>
+            <span class="text-muted fw-medium">&copy; 2026 - CinemaBooking</span>
         </div>
     </footer>
 
     <script src="~/lib/bootstrap/js/bootstrap.bundle.min.js"></script>
+    <script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const toggleBtn = document.getElementById('themeToggleBtn');
+            if (document.documentElement.classList.contains('dark-theme')) {
+                toggleBtn.textContent = 'Світла тема';
+            }
+            
+            toggleBtn.addEventListener('click', () => {
+                document.documentElement.classList.toggle('dark-theme');
+                if (document.documentElement.classList.contains('dark-theme')) {
+                    localStorage.setItem('theme', 'dark');
+                    toggleBtn.textContent = 'Світла тема';
+                } else {
+                    localStorage.setItem('theme', 'light');
+                    toggleBtn.textContent = 'Темна тема';
+                }
+            });
+        });
+    </script>
     @await RenderSectionAsync("Scripts", required: false)
 </body>
 </html>

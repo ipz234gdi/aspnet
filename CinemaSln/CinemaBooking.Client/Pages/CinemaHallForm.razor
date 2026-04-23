@@ -22,9 +22,20 @@
     </div>
 
     <div class="mb-3">
-        <label class="form-label">Місткість</label>
-        <InputNumber class="form-control" @bind-Value="hall.Capacity" />
-        <ValidationMessage For="@(() => hall.Capacity)" />
+        <label class="form-label">Кількість рядів</label>
+        <InputNumber class="form-control" @bind-Value="hall.Rows" />
+        <ValidationMessage For="@(() => hall.Rows)" />
+    </div>
+
+    <div class="mb-3">
+        <label class="form-label">Місць у ряді</label>
+        <InputNumber class="form-control" @bind-Value="hall.SeatsPerRow" />
+        <ValidationMessage For="@(() => hall.SeatsPerRow)" />
+    </div>
+    
+    <div class="mb-3">
+        <label class="form-label">Загальна місткість (розраховується автоматично)</label>
+        <input type="number" class="form-control" value="@(hall.Rows * hall.SeatsPerRow)" disabled />
     </div>
 
     <div class="mb-3">
@@ -58,6 +69,7 @@
     private async Task HandleSubmit()
     {
         HttpResponseMessage response;
+        hall.Capacity = hall.Rows * hall.SeatsPerRow;
 
         if (Id == null)
         {

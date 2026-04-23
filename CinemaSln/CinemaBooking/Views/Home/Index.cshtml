@@ -1,23 +1,64 @@
 @model CinemaBooking.Data.ViewModels.MoviesListViewModel
 
 @{
-    ViewData["Title"] = "Домашня сторінка";
+    ViewData["Title"] = Model.CurrentGenre ?? "Всі фільми";
+    var carouselMovies = Model.Movies.Take(5).ToList();
+}
+
+@if (carouselMovies.Any())
+{
+    <!-- Hero Carousel -->
+    <div id="movieCarousel" class="carousel slide hero-carousel" data-bs-ride="carousel">
+        <div class="carousel-inner">
+            @for (int i = 0; i < carouselMovies.Count; i++)
+            {
+                var m = carouselMovies[i];
+                <div class="carousel-item @(i == 0 ? "active" : "")" style="background: var(--surface);">
+                    <div class="row g-0 h-100">
+                        <div class="col-md-4 h-100">
+                            <img src="@m.ImageUrl" onerror="this.onerror=null;this.src='https://dummyimage.com/500x750/1e1e24/71717a&text=Постер+Відсутній';" alt="@m.Title" class="img-fluid h-100 w-100" style="object-fit: contain; background: #000;" />
+                        </div>
+                        <div class="col-md-8 d-flex align-items-center">
+                            <div class="p-5 w-100">
+                                <span class="badge bg-danger mb-2">@m.Genre</span>
+                                <h2 class="carousel-title text-wrap" style="color: var(--text);">@m.Title</h2>
+                                <p class="carousel-meta" style="color: var(--text-secondary);">@m.ShowDate.ToString("dd MMMM yyyy, HH:mm")</p>
+                                <p class="d-none d-md-block text-wrap" style="color: var(--text-secondary); max-height: 80px; overflow: hidden;">@m.Description</p>
+                                <a href="/Booking/SeatMap?movieId=@m.MovieID" class="btn btn-primary mt-3">Купити квиток</a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            }
+        </div>
+        <button class="carousel-control-prev" type="button" data-bs-target="#movieCarousel" data-bs-slide="prev">
+            <span class="carousel-control-prev-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Previous</span>
+        </button>
+        <button class="carousel-control-next" type="button" data-bs-target="#movieCarousel" data-bs-slide="next">
+            <span class="carousel-control-next-icon" aria-hidden="true"></span>
+            <span class="visually-hidden">Next</span>
+        </button>
+    </div>
 }
 
 <div class="section-header text-center mb-5">
-    <h2>Зараз у кіно</h2>
+    <h2>Розклад сеансів</h2>
     <p>Оберіть фільм та забронюйте улюблене місце в залі онлайн</p>
 </div>
 
 <div class="row">
     <div class="col-lg-2 col-md-3 mb-4">
-        @await Component.InvokeAsync("NavigationMenu")
+        <div class="p-3 rounded shadow-sm" style="background-color: var(--surface); border: 1px solid var(--border);">
+            <h5 class="mb-3 fw-bold">Фільтри</h5>
+            @await Component.InvokeAsync("NavigationMenu")
+        </div>
     </div>
     
     <div class="col-lg-10 col-md-9">
         @if (!Model.Movies.Any())
         {
-            <div class="text-center py-5 text-muted">
+            <div class="text-center py-5 rounded shadow-sm" style="background-color: var(--surface); border: 1px solid var(--border);">
                 <h4>На жаль, фільмів у цій категорії не знайдено</h4>
             </div>
         }

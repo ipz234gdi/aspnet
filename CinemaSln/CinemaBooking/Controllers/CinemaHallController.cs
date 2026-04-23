@@ -38,7 +38,9 @@ namespace CinemaBooking.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Create(CinemaHall hall)
         {
-            if (ModelState.IsValid)
+            hall.Capacity = hall.Rows * hall.SeatsPerRow;
+            ModelState.ClearValidationState("Capacity");
+            if (TryValidateModel(hall))
             {
                 repository.CreateCinemaHall(hall);
                 return RedirectToAction("Index");
@@ -58,11 +60,15 @@ namespace CinemaBooking.Controllers
         [Authorize(Roles = "Admin")]
         public IActionResult Edit(CinemaHall hall)
         {
-            if (ModelState.IsValid)
+            hall.Capacity = hall.Rows * hall.SeatsPerRow;
+            ModelState.ClearValidationState("Capacity");
+            if (TryValidateModel(hall))
             {
                 var existing = repository.CinemaHalls.FirstOrDefault(h => h.CinemaHallID == hall.CinemaHallID);
                 if (existing == null) return NotFound();
                 existing.Name = hall.Name;
+                existing.Rows = hall.Rows;
+                existing.SeatsPerRow = hall.SeatsPerRow;
                 existing.Capacity = hall.Capacity;
                 existing.Location = hall.Location;
                 repository.SaveCinemaHall(existing);

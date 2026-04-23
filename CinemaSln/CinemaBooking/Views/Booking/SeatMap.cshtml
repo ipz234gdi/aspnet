@@ -5,50 +5,61 @@
     var hallName = ViewBag.HallName as string;
     var rows = (int)ViewBag.Rows;
     var seatsPerRow = (int)ViewBag.SeatsPerRow;
-    var myBookedSeats = ViewBag.MyBookedSeats as List<string>;
+    var myBookedSeats = ViewBag.MyBookedSeats as List<string> ?? new List<string>();
+    var allBookedSeats = ViewBag.AllBookedSeats as List<string> ?? new List<string>();
 }
 
-<div class="mb-4">
-    <a href="/" class="btn btn-outline-secondary btn-sm mb-3">
-        &larr; Назад до фільмів
-    </a>
-    <div class="section-header">
-        <h2>@movie.Title</h2>
-        <p>Зал: @hallName &bull; Ціна квитка: @movie.TicketPrice.ToString("c")</p>
+<div class="mb-4 d-flex align-items-center justify-content-between">
+    <div>
+        <a href="/" class="btn btn-outline-secondary btn-sm mb-3">
+            &larr; Назад до фільмів
+        </a>
+        <div class="section-header mb-0">
+            <h2>@movie.Title</h2>
+            <p class="mb-0">Зал: @hallName &bull; Ціна квитка: @movie.TicketPrice.ToString("c") &bull; Початок: @movie.ShowDate.ToString("dd.MM.yyyy HH:mm")</p>
+        </div>
+    </div>
+    <div>
+        <div id="connection-status" class="badge bg-warning py-2 px-3 shadow-sm" style="font-size: 0.9rem;">
+            Підключення до залу...
+        </div>
     </div>
 </div>
 
-<div class="d-flex justify-content-center mb-4">
-    <div id="connection-status" class="badge bg-warning text-dark py-2 px-3">Підключення до залу...</div>
-</div>
-
-<div class="seat-map-container">
+<div class="seat-map-container mt-4">
     <div class="screen">
-        <div class="screen-label">Екран</div>
+        <div class="screen-label">ЕКРАН</div>
     </div>
 
-    <div class="seat-grid">
-        @for (int r = 1; r <= rows; r++)
-        {
-            <div class="seat-row">
-                <div class="row-label">Ряд @r</div>
-                @for (int s = 1; s <= seatsPerRow; s++)
-                {
-                    string seatLabel = $"Ряд {r}, Місце {s}";
-                    bool isMine = myBookedSeats.Contains(seatLabel);
-                    string cssClass = isMine ? "booked-mine" : "available";
+    <div class="seat-grid-wrapper">
+        <div class="seat-grid">
+            @for (int r = 1; r <= rows; r++)
+            {
+                <div class="seat-row">
+                    <div class="row-label">Ряд @r</div>
+                    <div class="d-flex gap-2 justify-content-center">
+                    @for (int s = 1; s <= seatsPerRow; s++)
+                    {
+                        string seatLabel = $"Ряд {r}, Місце {s}";
+                        bool isMine = myBookedSeats.Contains(seatLabel);
+                        bool isBookedByOther = !isMine && allBookedSeats.Contains(seatLabel);
+                        
+                        string cssClass = isMine ? "booked-mine" : (isBookedByOther ? "booked-other" : "available");
 
-                    <button type="button"
-                            class="seat @cssClass"
-                            data-row="@r"
-                            data-seat="@s"
-                            onclick="toggleSeat(this, @movie.MovieID, @r, @s)">
-                        @s
-                    </button>
-                }
-                <div class="row-label text-end">Ряд @r</div>
-            </div>
-        }
+                        <button type="button"
+                                class="seat @cssClass"
+                                data-row="@r"
+                                data-seat="@s"
+                                title="@seatLabel"
+                                onclick="toggleSeat(this, @movie.MovieID, @r, @s)">
+                            @s
+                        </button>
+                    }
+                    </div>
+                    <div class="row-label text-end">Ряд @r</div>
+                </div>
+            }
+        </div>
     </div>
 
     <div class="seat-legend">
@@ -78,7 +89,6 @@
             var btn = document.querySelector(`.seat[data-row='${row}'][data-seat='${seat}']`);
             if (btn) {
                 if (btn.classList.contains("booked-mine") && isBooked) {
-                    // It's mine, keep it
                     return;
                 }
                 
@@ -113,13 +123,13 @@
         function updateStatus(state) {
             var el = document.getElementById("connection-status");
             if (state === "connected") {
-                el.className = "badge bg-success";
-                el.textContent = "Live: Оновлення в реальному часі";
+                el.className = "badge bg-success shadow-sm text-white";
+                el.innerHTML = "Live: Оновлення в реальному часі";
             } else if (state === "reconnecting") {
-                el.className = "badge bg-warning text-dark";
+                el.className = "badge bg-warning shadow-sm";
                 el.textContent = "Перепідключення...";
             } else {
-                el.className = "badge bg-danger";
+                el.className = "badge bg-danger shadow-sm text-white";
                 el.textContent = "Відключено від залу";
             }
         }
@@ -127,7 +137,6 @@
         function toggleSeat(btn, movieId, row, seat) {
             if (btn.classList.contains("booked-other")) return;
 
-            // Optimistic update
             var wasMine = btn.classList.contains("booked-mine");
             
             if (wasMine) {
@@ -151,16 +160,13 @@
             .then(response => response.json())
             .then(data => {
                 if (!data.success) {
-                    // Revert on failure
                     btn.className = wasMine ? "seat booked-mine" : "seat available";
                 } else {
-                    // Sync with server state
                     btn.className = data.isBooked ? "seat booked-mine" : "seat available";
                 }
             })
             .catch(err => {
                 console.error('Error toggling seat:', err);
-                // Revert on error
                 btn.className = wasMine ? "seat booked-mine" : "seat available";
             });
         }

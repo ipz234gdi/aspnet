@@ -73,6 +73,7 @@ namespace CinemaBooking.Controllers
                 existing.TicketPrice = movie.TicketPrice;
                 existing.CinemaHallID = movie.CinemaHallID;
                 existing.ImageUrl = movie.ImageUrl;
+                existing.ShowDate = movie.ShowDate;
                 repository.SaveMovie(existing);
                 return RedirectToAction("Index");
             }

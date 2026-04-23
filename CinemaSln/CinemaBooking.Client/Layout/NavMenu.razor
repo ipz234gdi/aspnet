@@ -1,51 +1,26 @@
-<div class="top-row ps-3 navbar navbar-dark">
-    <div class="container-fluid">
-        <a class="navbar-brand" href="">CinemaBooking</a>
-    </div>
-</div>
+<ul class="navbar-nav me-auto mb-2 mb-lg-0">
+    <li class="nav-item">
+        <NavLink class="nav-link" href="" Match="NavLinkMatch.All">Головна</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="movies">Фільми</NavLink>
+    </li>
+    <li class="nav-item">
+        <NavLink class="nav-link" href="cinemahalls">Зали</NavLink>
+    </li>
+</ul>
 
-<input type="checkbox" title="Navigation menu" class="navbar-toggler" />
-
-<div class="nav-scrollable">
-    <nav class="flex-column">
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="" Match="NavLinkMatch.All">
-                <span class="bi bi-house-door-fill-nav-menu" aria-hidden="true"></span> Головна
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="movies">
-                <span class="bi bi-film" aria-hidden="true"></span> Фільми
-            </NavLink>
-        </div>
-        <div class="nav-item px-3">
-            <NavLink class="nav-link" href="cinemahalls">
-                <span class="bi bi-building" aria-hidden="true"></span> Зали
-            </NavLink>
-        </div>
-
-        <AuthorizeView>
-            <Authorized>
-                <div class="nav-item px-3">
-                    <a class="nav-link" href="" @onclick="Logout" @onclick:preventDefault>
-                        <span class="bi bi-box-arrow-right" aria-hidden="true"></span> Вихід (@context.User.Identity?.Name)
-                    </a>
-                </div>
-            </Authorized>
-            <NotAuthorized>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="login">
-                        <span class="bi bi-person-fill-nav-menu" aria-hidden="true"></span> Вхід
-                    </NavLink>
-                </div>
-                <div class="nav-item px-3">
-                    <NavLink class="nav-link" href="register">
-                        <span class="bi bi-person-plus" aria-hidden="true"></span> Реєстрація
-                    </NavLink>
-                </div>
-            </NotAuthorized>
-        </AuthorizeView>
-    </nav>
+<div class="d-flex align-items-center gap-3">
+    <AuthorizeView>
+        <Authorized>
+            <span class="text-secondary fw-medium">@context.User.Identity?.Name</span>
+            <button class="btn btn-outline-danger" @onclick="Logout">Вийти</button>
+        </Authorized>
+        <NotAuthorized>
+            <NavLink class="btn btn-outline-secondary" href="login">Увійти</NavLink>
+            <NavLink class="btn btn-primary" href="register">Реєстрація</NavLink>
+        </NotAuthorized>
+    </AuthorizeView>
 </div>
 
 @code {

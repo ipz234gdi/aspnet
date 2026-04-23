@@ -14,6 +14,9 @@ namespace CinemaBooking.Controllers
         private ICinemaRepository repository;
         private IHubContext<BookingHub> hubContext;
 
+        // Global in-memory storage for booked seats to persist across sessions/refreshes
+        public static System.Collections.Concurrent.ConcurrentDictionary<long, List<string>> GlobalBookedSeats = new System.Collections.Concurrent.ConcurrentDictionary<long, List<string>>();
+
         public BookingController(ICinemaRepository repo, IHubContext<BookingHub> hub)
         {
             repository = repo;
@@ -38,8 +41,8 @@ namespace CinemaBooking.Controllers
 
             ViewBag.Movie = movie;
             ViewBag.HallName = hall?.Name ?? "Невідомо";
-            ViewBag.Rows = 5;
-            ViewBag.SeatsPerRow = 10;
+            ViewBag.Rows = hall?.Rows ?? 10;
+            ViewBag.SeatsPerRow = hall?.SeatsPerRow ?? 10;
 
             var cart = HttpContext.Session.GetJson<BookingCart>(GetCartKey())
                        ?? new BookingCart();
@@ -47,6 +50,15 @@ namespace CinemaBooking.Controllers
                 .Where(i => i.MovieID == movieId)
                 .Select(i => i.Seat)
                 .ToList();
+
+            if (GlobalBookedSeats.TryGetValue(movieId, out var globalSeats))
+            {
+                ViewBag.AllBookedSeats = globalSeats;
+            }
+            else
+            {
+                ViewBag.AllBookedSeats = new List<string>();
+            }
 
             return View();
         }
@@ -103,15 +115,44 @@ namespace CinemaBooking.Controllers
             var existingItem = cart.Items.FirstOrDefault(i => i.MovieID == movieId && i.Seat == seatLabel);
             bool isBooked = false;
 
+            var globalSeats = GlobalBookedSeats.GetOrAdd(movieId, new List<string>());
+
             if (existingItem != null)
             {
-                // Remove seat
+                // Remove seat from session cart
                 cart.Items.Remove(existingItem);
+                
+                // Remove seat from global tracker
+                lock (globalSeats)
+                {
+                    globalSeats.Remove(seatLabel);
+                }
+
                 await hubContext.Clients.All.SendAsync("SeatUpdated", movieId, row, seat, false);
             }
             else
             {
-                // Add seat
+                // Verify seat is not booked by someone else globally
+                bool isGloballyBooked = false;
+                lock (globalSeats)
+                {
+                    if (globalSeats.Contains(seatLabel))
+                    {
+                        isGloballyBooked = true;
+                    }
+                    else
+                    {
+                        globalSeats.Add(seatLabel);
+                    }
+                }
+
+                if (isGloballyBooked)
+                {
+                    // Someone else booked it first
+                    return Json(new { success = false, message = "Місце вже зайнято" });
+                }
+
+                // Add seat to session cart
                 cart.Items.Add(new CartItem
                 {
                     MovieID = movie.MovieID ?? 0,
@@ -120,6 +161,7 @@ namespace CinemaBooking.Controllers
                     Seat = seatLabel,
                     TicketPrice = movie.TicketPrice
                 });
+                
                 await hubContext.Clients.All.SendAsync("SeatUpdated", movieId, row, seat, true);
                 isBooked = true;
             }
@@ -138,6 +180,14 @@ namespace CinemaBooking.Controllers
             if (item != null)
             {
                 cart.Items.Remove(item);
+
+                if (GlobalBookedSeats.TryGetValue(movieId, out var globalSeats))
+                {
+                    lock (globalSeats)
+                    {
+                        globalSeats.Remove(seat);
+                    }
+                }
 
                 var parts = seat.Replace("Ряд ", "").Replace("Місце ", "").Split(", ");
                 if (parts.Length == 2 && int.TryParse(parts[0], out int row) && int.TryParse(parts[1], out int seatNum))
@@ -159,6 +209,14 @@ namespace CinemaBooking.Controllers
 
             foreach (var item in cart.Items)
             {
+                if (GlobalBookedSeats.TryGetValue(item.MovieID, out var globalSeats))
+                {
+                    lock (globalSeats)
+                    {
+                        globalSeats.Remove(item.Seat);
+                    }
+                }
+
                 var parts = item.Seat.Replace("Ряд ", "").Replace("Місце ", "").Split(", ");
                 if (parts.Length == 2 && int.TryParse(parts[0], out int row) && int.TryParse(parts[1], out int seatNum))
                 {

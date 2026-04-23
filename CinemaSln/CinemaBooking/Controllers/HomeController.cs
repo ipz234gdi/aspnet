@@ -11,7 +11,7 @@ namespace CinemaBooking.Controllers
     {
         private ICinemaRepository repository;
 
-        public int PageSize = 2;
+        public int PageSize = 6;
 
         public HomeController(ICinemaRepository repo)
         {

@@ -1,39 +1,42 @@
 @model CinemaBooking.Models.ViewModels.RegisterModel
 @{
-    Layout = "_AuthLayout";
+    Layout = "_Layout";
 }
 
-<div class="card shadow-sm">
-    <div class="card-body p-4">
-        <h4 class="text-center mb-4">Реєстрація</h4>
-        <div asp-validation-summary="All" class="text-danger mb-3"></div>
-        <form asp-action="Register" method="post">
-            <div class="mb-3">
-                <label asp-for="UserName" class="form-label">Ім'я користувача</label>
-                <input asp-for="UserName" class="form-control" />
-                <span asp-validation-for="UserName" class="text-danger"></span>
+<div class="row justify-content-center mt-5">
+    <div class="col-md-6 col-lg-5">
+        <div class="card shadow-sm">
+            <div class="card-body p-4">
+                <h4 class="text-center mb-4">Реєстрація</h4>
+                <div asp-validation-summary="All" class="text-danger mb-3"></div>
+                <form asp-action="Register" method="post">
+                    <div class="mb-3">
+                        <label asp-for="UserName" class="form-label">Ім'я користувача</label>
+                        <input asp-for="UserName" class="form-control" />
+                        <span asp-validation-for="UserName" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Email" class="form-label">Email</label>
+                        <input asp-for="Email" type="email" class="form-control" />
+                        <span asp-validation-for="Email" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="Password" class="form-label">Пароль</label>
+                        <input asp-for="Password" type="password" class="form-control" />
+                        <span asp-validation-for="Password" class="text-danger"></span>
+                    </div>
+                    <div class="mb-3">
+                        <label asp-for="ConfirmPassword" class="form-label">Підтвердження паролю</label>
+                        <input asp-for="ConfirmPassword" type="password" class="form-control" />
+                        <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
+                    </div>
+                    <button type="submit" class="btn btn-primary w-100 mt-2">Зареєструватися</button>
+                </form>
+                <div class="text-center mt-3">
+                    <span class="text-muted">Вже маєте акаунт?</span>
+                    <a asp-action="Login">Увійти</a>
+                </div>
             </div>
-            <div class="mb-3">
-                <label asp-for="Email" class="form-label">Email</label>
-                <input asp-for="Email" type="email" class="form-control" />
-                <span asp-validation-for="Email" class="text-danger"></span>
-            </div>
-            <div class="mb-3">
-                <label asp-for="Password" class="form-label">Пароль</label>
-                <input asp-for="Password" type="password" class="form-control" />
-                <span asp-validation-for="Password" class="text-danger"></span>
-                <small class="text-muted">Мінімум 8 символів, містить цифри, літери та хоча б одну велику літеру</small>
-            </div>
-            <div class="mb-3">
-                <label asp-for="ConfirmPassword" class="form-label">Підтвердження паролю</label>
-                <input asp-for="ConfirmPassword" type="password" class="form-control" />
-                <span asp-validation-for="ConfirmPassword" class="text-danger"></span>
-            </div>
-            <button type="submit" class="btn btn-success w-100 mt-2">Зареєструватися</button>
-        </form>
-        <div class="text-center mt-3">
-            <span class="text-muted">Вже маєте акаунт?</span>
-            <a asp-action="Login">Увійти</a>
         </div>
     </div>
 </div>

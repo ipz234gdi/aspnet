@@ -12,9 +12,14 @@
                 <span asp-validation-for="Name" class="text-danger"></span>
             </div>
             <div class="mb-3">
-                <label asp-for="Capacity" class="form-label">Місткість</label>
-                <input asp-for="Capacity" class="form-control" />
-                <span asp-validation-for="Capacity" class="text-danger"></span>
+                <label asp-for="Rows" class="form-label">Кількість рядів</label>
+                <input asp-for="Rows" class="form-control" />
+                <span asp-validation-for="Rows" class="text-danger"></span>
+            </div>
+            <div class="mb-3">
+                <label asp-for="SeatsPerRow" class="form-label">Місць у ряді</label>
+                <input asp-for="SeatsPerRow" class="form-control" />
+                <span asp-validation-for="SeatsPerRow" class="text-danger"></span>
             </div>
             <div class="mb-3">
                 <label asp-for="Location" class="form-label">Розташування</label>

@@ -10,8 +10,16 @@ namespace CinemaBooking.Data.Models
         [StringLength(100, ErrorMessage = "Назва не може перевищувати 100 символів")]
         public string Name { get; set; } = string.Empty;
 
-        [Required(ErrorMessage = "Введіть місткість залу")]
-        [Range(1, 1000, ErrorMessage = "Місткість має бути від 1 до 1000")]
+        [Required(ErrorMessage = "Введіть кількість рядів")]
+        [Range(1, 50, ErrorMessage = "Кількість рядів має бути від 1 до 50")]
+        public int Rows { get; set; } = 10;
+
+        [Required(ErrorMessage = "Введіть кількість місць у ряді")]
+        [Range(1, 100, ErrorMessage = "Кількість місць у ряді має бути від 1 до 100")]
+        public int SeatsPerRow { get; set; } = 10;
+
+        // Custom validation to limit total capacity to 300
+        [Range(1, 300, ErrorMessage = "Загальна кількість місць (Ряди × Місця в ряді) не може перевищувати 300")]
         public int Capacity { get; set; }
 
         [Required(ErrorMessage = "Введіть розташування залу")]
