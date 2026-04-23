@@ -7,7 +7,10 @@
 }
 
 <h2 class="display-6 mb-2">Схема місць: @movie.Title</h2>
-<p class="text-muted mb-4">Зал: @hallName | Ціна: @movie.TicketPrice.ToString("c")</p>
+<p class="text-muted mb-2">Зал: @hallName | Ціна: @movie.TicketPrice.ToString("c")</p>
+<div class="mb-3">
+    <span id="connection-status" class="badge bg-warning">Підключення...</span>
+</div>
 
 <div class="seat-map-container mb-4">
     <div class="screen mb-4">
@@ -206,9 +209,37 @@
         showNotification(row, seat, isBooked);
     });
 
-    connection.start().catch(function (err) {
-        console.error(err.toString());
+    connection.start().then(function () {
+        updateStatus("connected");
+    }).catch(function (err) {
+        updateStatus("disconnected");
     });
+
+    connection.onreconnecting(function () {
+        updateStatus("reconnecting");
+    });
+
+    connection.onreconnected(function () {
+        updateStatus("connected");
+    });
+
+    connection.onclose(function () {
+        updateStatus("disconnected");
+    });
+
+    function updateStatus(state) {
+        var el = document.getElementById("connection-status");
+        if (state === "connected") {
+            el.className = "badge bg-success";
+            el.textContent = "Підключено (реальний час)";
+        } else if (state === "reconnecting") {
+            el.className = "badge bg-warning";
+            el.textContent = "Перепідключення...";
+        } else {
+            el.className = "badge bg-danger";
+            el.textContent = "Відключено";
+        }
+    }
 
     function toggleSeat(btn, movieId, row, seat) {
         if (btn.classList.contains("booked-other")) return;
